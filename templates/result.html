@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Health Assessment Result</title>
+
+<link rel="stylesheet"
+href="{{ url_for('static',filename='style.css') }}">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="header">
+
+<h1>🩺 MediAI Healthcare Assistant</h1>
+
+<p>
+
+AI Powered Health Assessment System
+
+</p>
+
+</div>
+
+<div class="dashboard">
+
+<div class="summary-card">
+
+<h3>👤 Patient</h3>
+
+<h2>{{ name }}</h2>
+
+<p>{{ age }} Years</p>
+
+<p>{{ gender }}</p>
+
+</div>
+
+<div class="summary-card">
+
+<h3>❤️ Health Score</h3>
+
+<h2>{{ health_score }}/100</h2>
+
+<p>{{ health_summary }}</p>
+
+</div>
+
+<div class="summary-card">
+
+<h3>⚠ Risk Level</h3>
+
+<h2>{{ risk }}</h2>
+
+</div>
+
+<div class="summary-card">
+
+<h3>🩺 BMI</h3>
+
+<h2>{{ bmi }}</h2>
+
+<p>{{ bmi_status }}</p>
+
+</div>
+
+</div>
+
+<h2>🧠 Possible Health Assessment</h2>
+
+<div class="card">
+
+<h1>
+
+{{ disease }}
+
+</h1>
+
+<p>
+
+Machine Learning Confidence
+
+</p>
+
+<progress
+
+value="{{ confidence }}"
+
+max="100">
+
+</progress>
+
+<h3>
+
+{{ confidence }} %
+
+</h3>
+
+</div>
+
+<h2>📊 Top Possible Conditions</h2>
+
+{% if predictions %}
+
+<table>
+
+<tr>
+
+<th>Condition</th>
+
+<th>Confidence</th>
+
+</tr>
+
+{% for disease_name, probability in predictions %}
+
+<tr>
+
+<td>{{ disease_name }}</td>
+
+<td>{{ "%.2f"|format(probability*100) }}%</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+{% endif %}
+
+<h2>🩺 Symptoms</h2>
+
+<div class="card">
+
+<p>
+
+{{ symptoms }}
+
+</p>
+
+</div>
+
+<h2>💊 Precautions</h2>
+
+<div class="card">
+
+{{ precaution }}
+
+</div>
+
+<h2>🤖 AI Recommendation</h2>
+
+<div class="card">
+
+<pre>
+
+{{ ai_response }}
+
+</pre>
+
+</div>
+
+<div class="buttons">
+
+<a href="/">
+
+🔄 New Assessment
+
+</a>
+
+<a href="{{ url_for('static', filename='report.pdf') }}"
+   target="_blank">
+
+📄 Download Report
+
+</a>
+
+</div>
+
+</div>
+
+</body>
+
+</html>

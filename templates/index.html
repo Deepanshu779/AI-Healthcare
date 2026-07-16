@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>MediAI Healthcare Diagnosis Assistant</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="header">
+
+<h1>🩺 MediAI Healthcare Diagnosis Assistant</h1>
+
+<p>
+Machine Learning + Generative AI (Groq)
+</p>
+
+</div>
+
+{% if error %}
+
+<div class="error">
+
+{{ error }}
+
+</div>
+
+{% endif %}
+
+<form action="/predict" method="POST">
+
+<!-- ========================= -->
+
+<h2>👤 Personal Information</h2>
+
+<div class="form-grid">
+
+<div class="form-group">
+
+<label>Full Name</label>
+
+<input
+type="text"
+name="name"
+placeholder="Enter your full name"
+required>
+
+</div>
+
+<div class="form-group">
+
+<label>Age</label>
+
+<input
+type="number"
+name="age"
+min="1"
+max="120"
+required>
+
+</div>
+
+<div class="form-group">
+
+<label>Gender</label>
+
+<select
+name="gender"
+required>
+
+<option value="">Select Gender</option>
+
+<option>Male</option>
+
+<option>Female</option>
+
+<option>Other</option>
+
+</select>
+
+</div>
+
+</div>
+
+<!-- ========================= -->
+
+<h2>📏 Physical Information</h2>
+
+<div class="form-grid">
+
+<div class="form-group">
+
+<label>Height (cm)</label>
+
+<input
+type="number"
+name="height"
+placeholder="170"
+required>
+
+</div>
+
+<div class="form-group">
+
+<label>Weight (kg)</label>
+
+<input
+type="number"
+name="weight"
+placeholder="65"
+required>
+
+</div>
+
+<div class="form-group">
+
+<label>Body Temperature (°C)</label>
+
+<input
+type="number"
+step="0.1"
+name="temperature"
+placeholder="36.8">
+
+</div>
+
+<div class="form-group">
+
+<label>Blood Oxygen (SpO₂ %)</label>
+
+<input
+type="number"
+name="spo2"
+placeholder="98">
+
+</div>
+
+</div>
+
+<!-- ========================= -->
+
+<h2>🩺 Select Symptoms</h2>
+
+<div class="symptom-grid">
+
+<label class="symptom-item">
+
+<input
+type="checkbox"
+name="symptoms"
+value="fever">
+
+Fever
+
+</label>
+
+<label class="symptom-item">
+
+<input
+type="checkbox"
+name="symptoms"
+value="cough">
+
+Cough
+
+</label>
+
+<label class="symptom-item">
+
+<input
+type="checkbox"
+name="symptoms"
+value="headache">
+
+Headache
+
+</label>
+
+<label class="symptom-item">
+
+<input
+type="checkbox"
+name="symptoms"
+value="fatigue">
+
+Fatigue
+
+</label>
+
+<label class="symptom-item">
+
+<input
+type="checkbox"
+name="symptoms"
+value="sore throat">
+
+Sore Throat
+
+</label>
+
+<label class="symptom-item">
+
+<input
+type="checkbox"
+name="symptoms"
+value="body pain">
+
+Body Pain
+
+</label>
+
+<label class="symptom-item">
+
+<input
+type="checkbox"
+name="symptoms"
+value="vomiting">
+
+Vomiting
+
+</label>
+
+<label class="symptom-item">
+
+<input
+type="checkbox"
+name="symptoms"
+value="nausea">
+
+Nausea
+
+</label>
+
+<label class="symptom-item">
+
+<input
+type="checkbox"
+name="symptoms"
+value="diarrhea">
+
+Diarrhea
+
+</label>
+
+<label class="symptom-item">
+
+<input
+type="checkbox"
+name="symptoms"
+value="chest pain">
+
+Chest Pain
+
+</label>
+
+<label class="symptom-item">
+
+<input
+type="checkbox"
+name="symptoms"
+value="shortness of breath">
+
+Shortness of Breath
+
+</label>
+
+<label class="symptom-item">
+
+<input
+type="checkbox"
+name="symptoms"
+value="loss of smell">
+
+Loss of Smell
+
+</label>
+
+</div>
+
+<div class="form-group">
+
+<label>Other Symptoms (Optional)</label>
+
+<textarea
+
+name="other_symptoms"
+
+rows="4"
+
+placeholder="Describe any additional symptoms..."></textarea>
+
+</div>
+
+<!-- ========================= -->
+
+<h2>📋 Medical Information</h2>
+
+<div class="form-grid">
+
+    <div class="form-group">
+
+        <label>Duration of Symptoms</label>
+
+        <select name="duration">
+
+            <option value="1 Day">1 Day</option>
+            <option value="2-3 Days">2–3 Days</option>
+            <option value="4-7 Days">4–7 Days</option>
+            <option value="More than 1 Week">More than 1 Week</option>
+
+        </select>
+
+    </div>
+
+    <div class="form-group">
+
+        <label>Severity</label>
+
+        <select name="severity">
+
+            <option value="Mild">Mild</option>
+            <option value="Moderate">Moderate</option>
+            <option value="Severe">Severe</option>
+
+        </select>
+
+    </div>
+
+    <div class="form-group">
+
+        <label>Symptoms are</label>
+
+        <select name="progress">
+
+            <option value="Improving">Improving</option>
+            <option value="Same">Same</option>
+            <option value="Getting Worse">Getting Worse</option>
+
+        </select>
+
+    </div>
+
+    <div class="form-group">
+
+        <label>Recent Contact with Sick Person?</label>
+
+        <select name="contact">
+
+            <option value="No">No</option>
+            <option value="Yes">Yes</option>
+            <option value="Not Sure">Not Sure</option>
+
+        </select>
+
+    </div>
+
+</div>
+
+<!-- ========================= -->
+
+<h2>❤️ Medical History</h2>
+
+<div class="symptom-grid">
+
+<label class="symptom-item">
+
+<input
+type="checkbox"
+name="history"
+value="Diabetes">
+
+Diabetes
+
+</label>
+
+<label class="symptom-item">
+
+<input
+type="checkbox"
+name="history"
+value="Hypertension">
+
+Hypertension
+
+</label>
+
+<label class="symptom-item">
+
+<input
+type="checkbox"
+name="history"
+value="Asthma">
+
+Asthma
+
+</label>
+
+<label class="symptom-item">
+
+<input
+type="checkbox"
+name="history"
+value="Heart Disease">
+
+Heart Disease
+
+</label>
+
+<label class="symptom-item">
+
+<input
+type="checkbox"
+name="history"
+value="Kidney Disease">
+
+Kidney Disease
+
+</label>
+
+<label class="symptom-item">
+
+<input
+type="checkbox"
+name="history"
+value="Thyroid">
+
+Thyroid
+
+</label>
+
+<label class="symptom-item">
+
+<input
+type="checkbox"
+name="history"
+value="None">
+
+None
+
+</label>
+
+</div>
+
+<!-- ========================= -->
+
+<h2>🚨 Emergency Symptoms</h2>
+
+<p style="color:#666;margin-bottom:15px;">
+Select only if you are currently experiencing any of these symptoms.
+</p>
+
+<div class="symptom-grid">
+
+<label class="symptom-item">
+
+<input
+type="checkbox"
+name="emergency"
+value="Chest Pain">
+
+Chest Pain
+
+</label>
+
+<label class="symptom-item">
+
+<input
+type="checkbox"
+name="emergency"
+value="Difficulty Breathing">
+
+Difficulty Breathing
+
+</label>
+
+<label class="symptom-item">
+
+<input
+type="checkbox"
+name="emergency"
+value="Loss of Consciousness">
+
+Loss of Consciousness
+
+</label>
+
+<label class="symptom-item">
+
+<input
+type="checkbox"
+name="emergency"
+value="Seizure">
+
+Seizure
+
+</label>
+
+<label class="symptom-item">
+
+<input
+type="checkbox"
+name="emergency"
+value="High Fever">
+
+High Fever (>39°C)
+
+</label>
+
+<label class="symptom-item">
+
+<input
+type="checkbox"
+name="emergency"
+value="Persistent Vomiting">
+
+Persistent Vomiting
+
+</label>
+
+</div>
+
+<br>
+
+<div class="card">
+
+<h3>ℹ Before You Continue</h3>
+
+<ul>
+
+<li>This tool provides an educational health assessment.</li>
+
+<li>It cannot confirm a medical diagnosis.</li>
+
+<li>The AI may suggest several possible conditions.</li>
+
+<li>If you experience emergency symptoms, seek immediate medical attention.</li>
+
+</ul>
+
+</div>
+
+<br>
+
+<button
+type="submit"
+onclick="showLoading()">
+
+🤖 Analyze My Health
+
+</button>
+
+<div id="loading" class="loading">
+
+🩺 Machine Learning is analyzing your symptoms...
+
+<br><br>
+
+🤖 Generative AI is preparing recommendations...
+
+</div>
+
+</form>
+
+<!-- ========================= -->
+<!-- Footer -->
+<!-- ========================= -->
+
+<div class="footer">
+
+    <hr style="margin:30px 0;">
+
+    <h3>🩺 MediAI Healthcare Diagnosis Assistant</h3>
+
+    <p>
+        AI-Powered Health Assessment using Machine Learning & Generative AI
+    </p>
+
+    <br>
+
+    <p>
+        <strong>Disclaimer:</strong>
+        This application is designed for educational and demonstration purposes only.
+        It does not replace professional medical advice, diagnosis, or treatment.
+        Always consult a qualified healthcare professional if your symptoms are severe,
+        persist, or worsen.
+    </p>
+
+    <br>
+
+    <p>
+        Developed as an AKTU Internship Project
+    </p>
+
+</div>
+
+</div>
+
+<script>
+
+function showLoading(){
+
+    document.getElementById("loading").style.display="block";
+
+}
+
+document.querySelector("form").addEventListener("submit",function(e){
+
+    const symptoms=document.querySelectorAll("input[name='symptoms']:checked");
+
+    const other=document.querySelector("textarea[name='other_symptoms']").value.trim();
+
+    if(symptoms.length===0 && other===""){
+
+        alert("Please select at least one symptom or enter it in Other Symptoms.");
+
+        e.preventDefault();
+
+        return;
+
+    }
+
+});
+
+document.querySelectorAll("input[name='emergency']").forEach(function(item){
+
+    item.addEventListener("change",function(){
+
+        const checked=document.querySelectorAll("input[name='emergency']:checked");
+
+        if(checked.length>0){
+
+            alert("⚠ Emergency symptoms selected.\n\nThis application cannot provide emergency medical care.\nPlease seek immediate medical attention if these symptoms are severe.");
+
+        }
+
+    });
+
+});
+
+</script>
+
+</body>
+
+</html>
