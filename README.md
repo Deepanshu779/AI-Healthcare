@@ -19,42 +19,12 @@ MediAI is a Flask-based healthcare assessment web application that uses machine 
 
 ## Technology Stack
 
-|        Layer          |         Technology          |
-|                       |                             |
-| Frontend              | HTML, CSS, Jinja2 templates |
-| Backend               | Python, Flask               |
-| Machine Learning      | scikit-learn                |
-| Data Handling         | pandas                      |
-| Model Serialization   | joblib                      |
-| Generative AI         | Groq API                    |
-| Environment Variables | python-dotenv               |
-| PDF Generation        | ReportLab                   |
-| Dataset Format        | CSV                         |
+<img width="1672" height="941" alt="Technology Stack" src="https://github.com/user-attachments/assets/a9b5185b-c3fa-4d0f-ba1c-a026bf29f022" />
+
 
 ## Project Structure
 
-
-Healthcare-AI/
-├── app.py
-├── predict.py
-├── train_model.py
-├── utils.py
-├── groq_helper.py
-├── report_generator.py
-├── requirements.txt
-├── dataset/
-│   └── disease_sympts_prec_full.csv
-├── model/
-│   ├── model.pkl
-│   └── vectorizer.pkl
-├── static/
-│   ├── style.css
-│   ├── report.css
-│   └── report.pdf
-└── templates/
-    ├── index.html
-    ├── result.html
-    └── report.html
+<img width="542" height="753" alt="image" src="https://github.com/user-attachments/assets/30cced7c-67a3-48f8-8a22-8e453f1280c7" />
 
 
 ## System Architecture
