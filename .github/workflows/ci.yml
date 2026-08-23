@@ -28,6 +28,9 @@ jobs:
       - name: Compile Python modules
         run: python -m compileall -q .
 
+      - name: Run safety regression tests
+        run: pytest -q
+
       - name: Audit dataset
         run: python -m ml.audit_dataset
 
