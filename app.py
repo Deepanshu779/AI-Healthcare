@@ -3,6 +3,7 @@ from flask import Flask, render_template, request
 from predict import predict_disease
 from groq_helper import get_ai_advice
 from report_generator import generate_report
+from safety_engine import assess_safety
 
 from utils import (
     calculate_bmi,
@@ -42,33 +43,27 @@ def home():
 
 @app.route("/predict", methods=["POST"])
 def predict():
-    # ===========================
-    # Personal Information
-    # ===========================
+    # Personal information
     name = request.form.get("name", "Patient").strip()
     age = parse_int(request.form.get("age"), default=30)
     gender = request.form.get("gender", "Not Specified")
 
-    # ===========================
-    # Physical Information
-    # ===========================
+    # Physical information
     height = parse_float(request.form.get("height"), default=170.0)
     weight = parse_float(request.form.get("weight"), default=65.0)
     temperature = request.form.get("temperature", "").strip()
     spo2 = request.form.get("spo2", "").strip()
 
-    # ===========================
     # Symptoms
-    # ===========================
     selected_symptoms = request.form.getlist("symptoms")
     other_symptoms = request.form.get("other_symptoms", "").strip()
-
     if other_symptoms:
-        # Split other symptoms by comma if user typed multiple
+        existing = {x.lower() for x in selected_symptoms}
         for s in other_symptoms.split(","):
             s_clean = s.strip().lower()
-            if s_clean and s_clean not in [x.lower() for x in selected_symptoms]:
+            if s_clean and s_clean not in existing:
                 selected_symptoms.append(s_clean)
+                existing.add(s_clean)
 
     if not selected_symptoms:
         return render_template(
@@ -79,9 +74,7 @@ def predict():
 
     symptoms_str = ", ".join(selected_symptoms)
 
-    # ===========================
-    # Medical Information
-    # ===========================
+    # Medical information
     duration = request.form.get("duration") or "1-3 Days"
     severity = request.form.get("severity") or "Mild"
     progress = request.form.get("progress") or "Stable"
@@ -90,60 +83,58 @@ def predict():
     history = ", ".join(history_list) if history_list else "None reported"
     emergency = request.form.getlist("emergency")
 
-    # ===========================
-    # Health Calculations
-    # ===========================
+    # Health calculations
     bmi = calculate_bmi(height, weight)
     bmi_result = bmi_status(bmi)
     risk = calculate_risk(age, severity, temperature, spo2)
     temp_status = temperature_status(temperature)
     oxygen_status = spo2_status(spo2)
-    emergency_detected = emergency_check(emergency)
+    safety = assess_safety(emergency, temperature, spo2, severity)
+    emergency_detected = safety["level"] == "Emergency" or emergency_check(emergency)
     score = health_score(risk, bmi)
     summary = health_summary(score)
 
-    # ===========================
-    # Machine Learning Prediction (100% Offline & Local)
-    # ===========================
+    # Local ML assessment. The compatibility layer automatically uses the
+    # MediAI 2.0 structured model once its artifacts have been trained.
     disease, confidence, precaution, predictions = predict_disease(symptoms_str)
+    disease_display = "Inconclusive / Overlapping Condition" if confidence < 35 else disease
 
-    if confidence < 35:
-        # If model confidence is very low, mark as inconclusive
-        disease_display = "Inconclusive / Overlapping Condition"
-    else:
-        disease_display = disease
-
-    # ===========================
-    # AI Clinical Advice
-    # ===========================
-    try:
-        ai_response = get_ai_advice(
-            age=age,
-            gender=gender,
-            symptoms=symptoms_str,
-            disease=disease_display,
-            duration=duration,
-            severity=severity,
-            history=history,
-            bmi=bmi,
-            risk=risk,
-            temperature=temperature,
-            spo2=spo2,
-            progress=progress,
-            contact=contact,
-            emergency=emergency
+    # Safety-first behavior: urgent cases are clearly framed before any
+    # educational AI guidance is generated.
+    if safety["level"] in {"Emergency", "Urgent"}:
+        ai_response = (
+            "## Safety / Triage Alert\n"
+            f"**Level: {safety['level']}**\n\n"
+            + "\n".join(f"- {alert}" for alert in safety["alerts"])
+            + f"\n\n**Recommended action:** {safety['action']}\n\n"
+            "## Important Clinical Note\n"
+            "This application provides an educational screening assessment and cannot confirm a diagnosis or replace professional medical care."
         )
-    except Exception as e:
-        ai_response = f"Clinical Assessment: {str(e)}"
+    else:
+        try:
+            ai_response = get_ai_advice(
+                age=age,
+                gender=gender,
+                symptoms=symptoms_str,
+                disease=disease_display,
+                duration=duration,
+                severity=severity,
+                history=history,
+                bmi=bmi,
+                risk=risk,
+                temperature=temperature,
+                spo2=spo2,
+                progress=progress,
+                contact=contact,
+                emergency=emergency
+            )
+        except Exception as e:
+            ai_response = f"Clinical Assessment: {str(e)}"
 
-    # Parse precautions and AI markdown sections for rich UI cards
     precautions_list = parse_precautions_list(precaution)
     ai_sections = parse_ai_sections(ai_response)
     has_api_key = bool(os.getenv("GROQ_API_KEY", "").strip())
 
-    # ===========================
-    # Generate PDF Report
-    # ===========================
     try:
         generate_report(
             name=name,
@@ -174,9 +165,6 @@ def predict():
     except Exception as e:
         print("PDF generation error:", e)
 
-    # ===========================
-    # Render Result Dashboard
-    # ===========================
     return render_template(
         "result.html",
         name=name,
@@ -195,6 +183,9 @@ def predict():
         health_summary=summary,
         emergency_detected=emergency_detected,
         emergency_list=emergency,
+        safety_level=safety["level"],
+        safety_alerts=safety["alerts"],
+        safety_action=safety["action"],
         symptoms=symptoms_str,
         selected_symptoms=selected_symptoms,
         duration=duration,
