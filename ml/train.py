@@ -1,10 +1,8 @@
 """Train and evaluate MediAI 2.0 symptom models.
 
-This script intentionally evaluates several models rather than assuming that
-Random Forest is best. It also prevents the common mistake of fitting a text
-vectorizer before the train/test split: symptom vocabulary is learned from the
-training fold only through the feature names already defined by the benchmark
-schema.
+The benchmark dataset contains repeated disease/symptom combinations. To avoid
+an overly optimistic score, identical disease+symptom signatures are kept in
+the same fold using StratifiedGroupKFold.
 """
 from __future__ import annotations
 
@@ -16,7 +14,7 @@ import pandas as pd
 from sklearn.calibration import CalibratedClassifierCV
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import StratifiedGroupKFold
 from sklearn.ensemble import RandomForestClassifier, HistGradientBoostingClassifier
 from sklearn.svm import LinearSVC
 
@@ -28,27 +26,18 @@ RANDOM_STATE = 42
 
 
 def build_models():
-    """Return strong, CPU-friendly candidate models for tabular symptom data."""
     return {
         "logistic_regression": LogisticRegression(max_iter=3000, C=2.0, class_weight="balanced"),
         "random_forest": RandomForestClassifier(
-            n_estimators=500,
-            max_features="sqrt",
-            min_samples_leaf=1,
-            class_weight="balanced_subsample",
-            random_state=RANDOM_STATE,
-            n_jobs=-1,
+            n_estimators=500, max_features="sqrt", min_samples_leaf=1,
+            class_weight="balanced_subsample", random_state=RANDOM_STATE, n_jobs=-1,
         ),
         "linear_svm": CalibratedClassifierCV(
             LinearSVC(C=1.0, class_weight="balanced", random_state=RANDOM_STATE),
-            cv=3,
-            method="sigmoid",
+            cv=3, method="sigmoid",
         ),
         "hist_gradient_boosting": HistGradientBoostingClassifier(
-            learning_rate=0.08,
-            max_iter=250,
-            max_leaf_nodes=31,
-            random_state=RANDOM_STATE,
+            learning_rate=0.08, max_iter=250, max_leaf_nodes=31, random_state=RANDOM_STATE,
         ),
     }
 
@@ -70,9 +59,14 @@ def main() -> None:
 
     df = load_dataset()
     X, y, vocabulary = build_feature_matrix(df)
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.20, random_state=RANDOM_STATE, stratify=y
+    groups = df["disease"].astype(str) + "::" + df["symptom_list"].map(
+        lambda x: "|".join(sorted(set(x)))
     )
+
+    splitter = StratifiedGroupKFold(n_splits=5, shuffle=True, random_state=RANDOM_STATE)
+    train_idx, test_idx = next(splitter.split(X, y, groups=groups))
+    X_train, X_test = X.iloc[train_idx], X.iloc[test_idx]
+    y_train, y_test = y.iloc[train_idx], y.iloc[test_idx]
 
     results = []
     trained = {}
@@ -90,14 +84,15 @@ def main() -> None:
 
     joblib.dump(best_model, MODEL_DIR / "model_v2.pkl")
     joblib.dump(vocabulary, MODEL_DIR / "symptom_vocabulary_v2.pkl")
-
     results_df.to_csv(RESULT_DIR / "model_comparison.csv", index=False)
+
     metadata = {
         "version": "2.0",
         "task": "symptom-based preliminary health assessment benchmark",
         "best_model": best_name,
         "random_state": RANDOM_STATE,
-        "test_size": 0.20,
+        "validation": "5-fold StratifiedGroupKFold; first held-out fold used for benchmark comparison",
+        "grouping": "disease + normalized symptom signature",
         "feature_type": "binary symptom presence",
         "dataset": dataset_summary(df, X),
         "models_evaluated": list(trained),
