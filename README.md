@@ -45,6 +45,8 @@ AI-Healthcare/
 │   ├── audit_dataset.py
 │   ├── train.py
 │   └── evaluate.py
+├── tests/
+│   └── test_safety_engine.py
 ├── dataset/
 │   └── disease_sympts_prec_full.csv
 ├── model/
@@ -55,6 +57,34 @@ AI-Healthcare/
 ├── static/
 └── templates/
 ```
+
+## Local setup
+
+Create a virtual environment and install the dependencies:
+
+```bash
+python -m venv venv
+```
+
+Windows PowerShell:
+
+```powershell
+.\venv\Scripts\activate
+```
+
+macOS/Linux:
+
+```bash
+source venv/bin/activate
+```
+
+Then:
+
+```bash
+pip install -r requirements.txt
+```
+
+Groq is optional. Keep API keys in your local environment; **never commit `.env` or API keys to GitHub**.
 
 ## Train MediAI 2.0
 
@@ -68,6 +98,22 @@ python -m ml.evaluate
 
 Training creates `model/model_v2.pkl` and `model/symptom_vocabulary_v2.pkl`. Until those artifacts exist, `predict.py` automatically keeps using the original model so existing deployments remain functional.
 
+## Run the application
+
+```bash
+python app.py
+```
+
+Open `http://127.0.0.1:5000` in your browser.
+
+## Run tests
+
+```bash
+pytest -q
+```
+
+The GitHub Actions workflow also compiles the project, runs safety regression tests, audits the dataset, trains the benchmark models, generates evaluation artifacts, and performs a Flask smoke test.
+
 ## Technology stack
 
 - Python / Flask
@@ -77,6 +123,11 @@ Training creates `model/model_v2.pkl` and `model/symptom_vocabulary_v2.pkl`. Unt
 - Groq (optional)
 - ReportLab
 - Matplotlib for evaluation artifacts
+- Pytest for regression tests
+
+## Deployment
+
+MediAI is a Python/Flask application and should be deployed on a Python-capable service such as Render or another WSGI-compatible platform. Netlify is not required for the application runtime.
 
 ## Responsible use
 
