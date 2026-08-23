@@ -8,7 +8,7 @@ import joblib
 import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.metrics import classification_report, confusion_matrix, ConfusionMatrixDisplay
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import StratifiedGroupKFold
 
 from ml.preprocess import build_feature_matrix, load_dataset
 
@@ -16,12 +16,20 @@ from ml.preprocess import build_feature_matrix, load_dataset
 def main() -> None:
     df = load_dataset()
     X, y, _ = build_feature_matrix(df)
-    model = joblib.load("model/model_v2.pkl")
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.20, random_state=42, stratify=y
+    groups = df["disease"].astype(str) + "::" + df["symptom_list"].map(
+        lambda x: "|".join(sorted(set(x)))
     )
-    model.fit(X_train, y_train)
-    pred = model.predict(X_test)
+    _, test_idx = next(
+        StratifiedGroupKFold(n_splits=5, shuffle=True, random_state=42).split(X, y, groups=groups)
+    )
+
+    model = joblib.load("model/model_v2.pkl")
+    # Retrain on the complementary fold so this report evaluates the same
+    # leakage-aware split family used by ml/train.py.
+    train_idx = X.index.difference(X.index[test_idx])
+    model.fit(X.loc[train_idx], y.loc[train_idx])
+    pred = model.predict(X.iloc[test_idx])
+    y_test = y.iloc[test_idx]
 
     Path("results").mkdir(exist_ok=True)
     report = classification_report(y_test, pred, zero_division=0, output_dict=True)
@@ -38,7 +46,6 @@ def main() -> None:
     fig.tight_layout()
     fig.savefig("results/confusion_matrix.png", dpi=180)
     plt.close(fig)
-
     print("Evaluation artifacts written to results/.")
 
 
