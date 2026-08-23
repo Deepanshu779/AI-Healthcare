@@ -1,7 +1,8 @@
 import os
-from flask import Flask, render_template, request
+from flask import Flask, jsonify, render_template, request
 from predict import predict_disease
 from groq_helper import get_ai_advice
+from chat_service import chat_response
 from report_generator import generate_report
 from safety_engine import assess_safety
 
@@ -29,6 +30,25 @@ def parse_float(value, default=0.0):
 @app.route("/")
 def home():
     return render_template("index.html", has_api_key=bool(os.getenv("GROQ_API_KEY", "").strip()))
+
+
+@app.route("/assistant")
+def assistant():
+    return render_template("assistant.html")
+
+
+@app.route("/api/chat", methods=["POST"])
+def api_chat():
+    payload = request.get_json(silent=True) or {}
+    message = str(payload.get("message", "")).strip()
+    if not message:
+        return jsonify({"reply": "Please describe what you are experiencing or ask a health question."}), 400
+    if len(message) > 3000:
+        return jsonify({"reply": "Please keep your message under 3000 characters."}), 400
+    history = payload.get("history", [])
+    if not isinstance(history, list):
+        history = []
+    return jsonify({"reply": chat_response(message, history)})
 
 
 @app.route("/predict", methods=["POST"])
