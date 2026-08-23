@@ -1,0 +1,50 @@
+name: MediAI CI
+
+on:
+  push:
+    branches: [main, feature/mediai-2-0-ml-core]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Compile Python modules
+        run: python -m compileall -q .
+
+      - name: Audit dataset
+        run: python -m ml.audit_dataset
+
+      - name: Train benchmark models
+        run: python -m ml.train
+
+      - name: Generate evaluation artifacts
+        run: python -m ml.evaluate
+
+      - name: Flask smoke test
+        env:
+          FLASK_ENV: testing
+        run: |
+          python - <<'PY'
+          from app import app
+          client = app.test_client()
+          response = client.get('/')
+          assert response.status_code == 200, response.status_code
+          print('Flask home route OK')
+          PY
