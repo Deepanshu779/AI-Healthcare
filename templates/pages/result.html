@@ -1,0 +1,252 @@
+{% extends "base.html" %}
+
+{% block title %}Diagnostic Assessment Report — {{ name }} | MediAI 2.0{% endblock %}
+
+{% block content %}
+<div class="result-page-container">
+    <!-- Header Banner -->
+    <div class="result-header-card">
+        <div>
+            <span class="section-pill">Clinical Assessment Summary</span>
+            <h1 style="font-size: 2.2rem; margin-top: 6px;">{{ name }}'s Diagnostic Overview</h1>
+            <div class="result-hero-meta">
+                <span><strong>Age:</strong> {{ age }} yrs</span>
+                <span>•</span>
+                <span><strong>Gender:</strong> {{ gender }}</span>
+                <span>•</span>
+                <span><strong>Symptoms Recorded:</strong> {{ selected_symptoms|length }}</span>
+                <span>•</span>
+                <span><strong>Report Date:</strong> Today</span>
+            </div>
+        </div>
+
+        <div class="result-actions-strip">
+            <a href="/assessment" class="btn btn-secondary">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                <span>New Assessment</span>
+            </a>
+
+            <button type="button" class="btn btn-secondary" onclick="window.print()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                    <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                    <rect x="6" y="14" width="12" height="8"></rect>
+                </svg>
+                <span>Print</span>
+            </button>
+
+            <a href="/report/download" class="btn btn-primary btn-glow">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                <span>Download PDF Report</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Emergency Red-Flag Banner (If Critical Symptoms Present) -->
+    {% if emergency_detected %}
+    <div style="background: rgba(239, 68, 68, 0.18); border: 2px solid #ef4444; border-radius: var(--radius-lg); padding: 24px; margin-bottom: 32px; box-shadow: 0 0 30px rgba(239, 68, 68, 0.3); animation: pulseDanger 3s infinite alternate;">
+        <div style="display: flex; align-items: center; gap: 12px; color: #f87171; font-weight: 800; font-size: 1.15rem; margin-bottom: 8px;">
+            <span style="font-size: 1.5rem;">🚨</span>
+            <span>CRITICAL CLINICAL RED-FLAG ALERT</span>
+        </div>
+        <p style="color: var(--text-main); font-size: 0.92rem; line-height: 1.6;">
+            High-risk emergency symptoms were reported during assessment (<strong>{{ emergency_list|join(', ') }}</strong>). 
+            Do not rely solely on preliminary online evaluation. Please seek immediate emergency medical care (call <strong>911</strong> or visit nearest ER).
+        </p>
+    </div>
+    {% endif %}
+
+    <!-- 3D Biometric Gauges Grid -->
+    <div class="diagnostic-gauges-grid">
+        <!-- Health Score Card -->
+        <div class="diag-gauge-card">
+            <div class="diag-gauge-header">
+                <span>Health Score</span>
+                <span style="font-size: 1.2rem;">🛡️</span>
+            </div>
+            <div class="diag-score-val" style="color: var(--primary);">{{ health_score }}<span style="font-size: 1.2rem; color: var(--text-muted); font-weight: 500;">/100</span></div>
+            <div class="diag-score-sub">Overall Status: <strong style="color: var(--text-main);">{{ health_summary }}</strong></div>
+        </div>
+
+        <!-- Risk Level Card -->
+        <div class="diag-gauge-card">
+            <div class="diag-gauge-header">
+                <span>Risk Stratification</span>
+                <span style="font-size: 1.2rem;">⚠️</span>
+            </div>
+            <div class="diag-score-val" style="{% if risk in ['High', 'Critical'] %}color: var(--danger);{% elif risk == 'Medium' %}color: var(--warning);{% else %}color: var(--success);{% endif %}">
+                {{ risk }}
+            </div>
+            <div class="diag-score-sub">Severity: <strong>{{ severity }}</strong></div>
+        </div>
+
+        <!-- BMI Card -->
+        <div class="diag-gauge-card">
+            <div class="diag-gauge-header">
+                <span>Body Mass Index</span>
+                <span style="font-size: 1.2rem;">⚖️</span>
+            </div>
+            <div class="diag-score-val" style="color: #38bdf8;">{{ bmi }}</div>
+            <div class="diag-score-sub">Category: <strong>{{ bmi_status }}</strong> ({{ height }}cm, {{ weight }}kg)</div>
+        </div>
+
+        <!-- SpO2 & Temp Card -->
+        <div class="diag-gauge-card">
+            <div class="diag-gauge-header">
+                <span>Vitals Overview</span>
+                <span style="font-size: 1.2rem;">🫁</span>
+            </div>
+            <div class="diag-score-val" style="color: #34d399; font-size: 1.7rem;">
+                {{ spo2 }}% <span style="font-size: 1.2rem; color: var(--text-muted);">|</span> {{ temperature }}°C
+            </div>
+            <div class="diag-score-sub">SpO2: <strong>{{ spo2_status }}</strong> • Temp: <strong>{{ temperature_status }}</strong></div>
+        </div>
+    </div>
+
+    <!-- Primary Differential Diagnosis Hero Card -->
+    <div class="differential-primary-card">
+        <div class="diff-eyebrow">Primary Differential Indication (Local Machine Learning)</div>
+        <h2 class="diff-disease-name text-gradient">{{ disease }}</h2>
+
+        <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px; flex-wrap: wrap;">
+            <div style="background: var(--primary-soft); border: 1px solid var(--border-glow); border-radius: var(--radius-pill); padding: 6px 14px; color: var(--primary); font-weight: 700; font-size: 0.88rem;">
+                Confidence: {{ confidence }}% Match
+            </div>
+            <div style="color: var(--text-secondary); font-size: 0.88rem;">
+                Duration: <strong>{{ duration }}</strong> • Course: <strong>{{ progress }}</strong>
+            </div>
+        </div>
+
+        <!-- Differential Comparison Probability Bars -->
+        {% if predictions %}
+        <div class="differential-bars-container">
+            <h4 style="font-size: 0.95rem; margin-bottom: 16px; color: var(--text-main);">Top ML Differential Probabilities</h4>
+            {% for pred_disease, prob in predictions %}
+            <div class="diff-bar-row">
+                <div class="diff-bar-label-group">
+                    <span>{{ pred_disease }}</span>
+                    <strong style="color: var(--primary);">{{ (prob * 100) | round(1) }}%</strong>
+                </div>
+                <div class="diff-progress-track">
+                    <div class="diff-progress-fill" style="width: {{ (prob * 100) | round(1) }}%;"></div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- AI Clinical Advice Grid -->
+    <div class="ai-advice-cards-grid">
+        <!-- Home Care Protocol -->
+        <div class="advice-card">
+            <div class="advice-card-header">
+                <div class="advice-card-icon">🏠</div>
+                <div>
+                    <h3 style="font-size: 1.15rem;">Home Care Protocol</h3>
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">Supportive Non-Prescription Care</div>
+                </div>
+            </div>
+            <div class="advice-card-body">
+                {% if ai_sections.home_care %}
+                    {{ ai_sections.home_care | replace('\n', '<br>') | safe }}
+                {% else %}
+                    <ul>
+                        {% for prec in precautions_list %}
+                        <li>{{ prec }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Nutrition & Hydration -->
+        <div class="advice-card">
+            <div class="advice-card-header">
+                <div class="advice-card-icon" style="color: #34d399; background: rgba(52, 211, 153, 0.1);">🥗</div>
+                <div>
+                    <h3 style="font-size: 1.15rem;">Evidence-Based Nutrition</h3>
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">Electrolytes & Dietary Support</div>
+                </div>
+            </div>
+            <div class="advice-card-body">
+                {% if ai_sections.diet %}
+                    {{ ai_sections.diet | replace('\n', '<br>') | safe }}
+                {% else %}
+                    <p>Maintain optimal hydration (recommended: ~{{ hydration }} L/day). Consume easily digestible, nutrient-dense whole foods and avoid greasy, inflammatory, or highly processed items.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Red Flags -->
+        <div class="advice-card">
+            <div class="advice-card-header">
+                <div class="advice-card-icon" style="color: #ef4444; background: rgba(239, 68, 68, 0.1);">⚠️</div>
+                <div>
+                    <h3 style="font-size: 1.15rem;">Critical Warning Signs</h3>
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">When to Seek Urgent Care</div>
+                </div>
+            </div>
+            <div class="advice-card-body">
+                {% if ai_sections.warnings %}
+                    {{ ai_sections.warnings | replace('\n', '<br>') | safe }}
+                {% else %}
+                    <p>Seek immediate medical care if you experience chest pain, severe shortness of breath, blood oxygen SpO2 dropping below 93%, or persistent high fever unresponsive to medication.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Specialist Recommendation -->
+        <div class="advice-card">
+            <div class="advice-card-header">
+                <div class="advice-card-icon" style="color: #a855f7; background: rgba(168, 85, 247, 0.1);">🩺</div>
+                <div>
+                    <h3 style="font-size: 1.15rem;">Specialist & Next Steps</h3>
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">Physician Consultation Guidance</div>
+                </div>
+            </div>
+            <div class="advice-card-body">
+                {% if ai_sections.specialist %}
+                    {{ ai_sections.specialist | replace('\n', '<br>') | safe }}
+                {% else %}
+                    <p>Schedule a formal clinical evaluation with a General Physician or relevant specialist. Take this printed assessment summary and your logged vital signs to your appointment.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Symptoms Tags Section -->
+    <div style="background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 24px; margin-bottom: 32px;">
+        <h4 style="font-size: 0.95rem; margin-bottom: 12px; color: var(--text-main);">Recorded Patient Symptoms:</h4>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+            {% for s in selected_symptoms %}
+            <span style="font-size: 0.8rem; font-family: 'JetBrains Mono', monospace; background: var(--bg-surface); border: 1px solid var(--border-medium); border-radius: var(--radius-pill); padding: 4px 12px; color: var(--primary);">
+                {{ s | replace('_', ' ') }}
+            </span>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Educational Disclaimer -->
+    <div class="footer-disclaimer-box" style="margin-bottom: 0;">
+        <div class="disclaimer-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                <line x1="12" y1="9" x2="12" y2="13"></line>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            <strong>Educational & Decision Support Disclaimer</strong>
+        </div>
+        <p>
+            This automated differential is generated by MediAI 2.0 for clinical education and triage assistance. It does not replace a physical examination, diagnostic laboratory assays, or a formal physician diagnosis.
+        </p>
+    </div>
+</div>
+{% endblock %}

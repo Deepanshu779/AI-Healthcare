@@ -1,4 +1,5 @@
 import os
+import re
 from dotenv import load_dotenv
 
 try:
@@ -17,59 +18,59 @@ def get_disease_category_guidance(disease_name):
 
     if any(k in d_lower for k in ["gerd", "acidity", "peptic ulcer", "gastritis", "gastroenteritis"]):
         return {
-            "overview": "Gastrointestinal tract irritation or acid reflux may cause epigastric pain, nausea, and burning sensation.",
-            "home_care": "Eat smaller, more frequent meals. Avoid lying down for at least 2-3 hours after eating. Elevate the head of your bed slightly.",
-            "diet": "Opt for non-citrus fruits (bananas, melons), oatmeal, lean proteins, boiled vegetables, and ginger tea. Avoid spicy, fried, caffeinated, and acidic foods.",
-            "specialist": "Gastroenterologist or Internal Medicine Physician if pain is severe, accompanied by black stools or difficulty swallowing."
+            "overview": "Gastrointestinal tract irritation or acid reflux may cause epigastric pain, nausea, heartburn, and burning sensations.",
+            "home_care": "Eat smaller, more frequent meals. Avoid lying down for at least 2-3 hours after meals. Elevate the head of your bed slightly.",
+            "diet": "Opt for non-citrus fruits (bananas, melons), oatmeal, lean poultry, boiled vegetables, and ginger infusion. Avoid spicy, fried, caffeinated, and acidic foods.",
+            "specialist": "Gastroenterologist or Internal Medicine Physician if discomfort is severe, accompanied by black stools or difficulty swallowing."
         }
-    elif any(k in d_lower for k in ["pneumonia", "bronchial asthma", "bronchitis", "tuberculosis"]):
+    elif any(k in d_lower for k in ["pneumonia", "bronchial asthma", "bronchitis", "tuberculosis", "chronic"]):
         return {
-            "overview": "Lower respiratory involvement that can impact airway ventilation, oxygen exchange, and lung capacity.",
-            "home_care": "Use warm steam inhalation, stay in well-ventilated areas, rest in an elevated seating position, and continuously monitor SpO2 levels.",
-            "diet": "Warm soups, herbal teas with honey, antioxidant-rich fruits, vitamin C sources, and ample warm water to thin mucus.",
-            "specialist": "Pulmonologist or Emergency Care immediately if oxygen drops below 94% or breathing becomes labored."
+            "overview": "Lower respiratory tract condition impacting airway ventilation, oxygenation, and pulmonary capacity.",
+            "home_care": "Use warm steam inhalation, stay in clean well-ventilated spaces, rest in an elevated upright position, and continuously track SpO2 levels.",
+            "diet": "Warm broths, herbal infusions with honey, antioxidant-rich berries, citrus bioflavonoids, and ample warm hydration to thin bronchial secretions.",
+            "specialist": "Pulmonologist or Emergency Care immediately if blood oxygen drops below 94% or breathing becomes labored."
         }
     elif any(k in d_lower for k in ["common cold", "allergy", "allergic rhinitis", "sinusitis"]):
         return {
-            "overview": "Upper respiratory tract viral infection or allergic response affecting nasal passages and sinuses.",
-            "home_care": "Saline nasal rinse, steam inhalation, warm salt water gargling, ample rest, and staying away from known allergens and dust.",
-            "diet": "Warm fluids, ginger-turmeric tea, chicken/vegetable broth, citrus fruits, and zinc-rich foods.",
-            "specialist": "General Physician or ENT specialist if symptoms persist beyond 7–10 days or facial pain worsens."
+            "overview": "Upper respiratory tract viral infection or allergic response affecting nasal passages, sinuses, and pharynx.",
+            "home_care": "Saline nasal irrigation, steam inhalation, warm salt water gargling, ample rest, and allergen avoidance.",
+            "diet": "Warm liquids, ginger-turmeric tea, chicken/vegetable soup, citrus fruits, and zinc-rich foods.",
+            "specialist": "General Physician or ENT Specialist if symptoms persist beyond 7–10 days or facial sinus pressure worsens."
         }
     elif any(k in d_lower for k in ["malaria", "dengue", "typhoid", "viral fever"]):
         return {
-            "overview": "Systemic febrile illness often transmitted through vectors or waterborne pathogens requiring clinical confirmation through blood testing.",
-            "home_care": "Strict bed rest, cold sponge baths for high fever, use mosquito netting, and monitor platelet count or fever pattern closely.",
-            "diet": "High hydration with ORS (Oral Rehydration Salts), tender coconut water, pomegranate juice, papaya leaf extract (if advised), and easily digestible porridge.",
+            "overview": "Systemic febrile illness often transmitted through vectors or waterborne pathogens requiring clinical confirmation via laboratory testing.",
+            "home_care": "Strict bed rest, cold sponge baths for temperature reduction, mosquito netting, and daily platelet or fever pattern monitoring.",
+            "diet": "Intensive hydration with ORS (Oral Rehydration Salts), tender coconut water, pomegranate juice, and easily digestible porridge.",
             "specialist": "Infectious Disease Specialist or General Physician for diagnostic blood panels (CBC, Widal, NS1 antigen, Dengue IgM/IgG, MP smear)."
         }
     elif any(k in d_lower for k in ["fungal infection", "jaundice", "hepatitis", "skin rash", "acne", "psoriasis"]):
         return {
-            "overview": "Dermatological or hepatic condition affecting skin integrity, fungal proliferation, or bilirubin clearance.",
-            "home_care": "Keep affected areas clean and completely dry. Wear loose, breathable cotton clothing. Avoid sharing towels or personal items.",
-            "diet": "Low-fat, easily digestible diet. Drink abundant clean filtered water. For liver health, strictly avoid alcohol and processed greasy foods.",
-            "specialist": "Dermatologist for cutaneous symptoms, or Hepatologist / Gastroenterologist for yellowing of eyes/skin (jaundice)."
+            "overview": "Dermatological or hepatic condition affecting skin barrier integrity, fungal proliferation, or bilirubin clearance.",
+            "home_care": "Keep affected skin clean and completely dry. Wear loose, breathable cotton clothing. Avoid sharing towels or linens.",
+            "diet": "Low-fat, easily digestible diet. Drink abundant clean water. Strictly avoid alcohol, refined sugars, and greasy fried foods.",
+            "specialist": "Dermatologist for cutaneous symptoms, or Hepatologist / Gastroenterologist for jaundice / elevated liver enzymes."
         }
     elif any(k in d_lower for k in ["arthritis", "osteoarthritis", "cervical spondylosis"]):
         return {
             "overview": "Musculoskeletal or joint inflammatory condition causing stiffness, discomfort, and restricted range of motion.",
-            "home_care": "Apply warm compresses for stiffness and cold packs for acute swelling. Practice gentle range-of-motion stretching.",
-            "diet": "Anti-inflammatory foods: omega-3 fatty acids (flaxseeds, walnuts, fatty fish), turmeric, berries, leafy greens, and calcium-rich dairy or plant milks.",
+            "home_care": "Apply warm compresses for stiffness and cold packs for acute swelling. Practice gentle low-impact range-of-motion stretching.",
+            "diet": "Anti-inflammatory foods: omega-3 fatty acids (flaxseeds, walnuts, chia seeds), turmeric, dark leafy greens, and calcium-rich foods.",
             "specialist": "Rheumatologist or Orthopedic Specialist for targeted physical therapy and joint imaging."
         }
     elif any(k in d_lower for k in ["diabetes", "hypoglycemia", "hypertension", "hypothyroidism", "hyperthyroidism"]):
         return {
-            "overview": "Endocrine or metabolic regulation imbalance requiring regular parameter monitoring and lifestyle adjustments.",
-            "home_care": "Monitor blood glucose and blood pressure periodically. Maintain consistent sleep and low-impact daily exercise schedules.",
+            "overview": "Endocrine or metabolic regulation imbalance requiring periodic biometric monitoring and lifestyle calibration.",
+            "home_care": "Monitor blood glucose and blood pressure regularly. Maintain consistent sleep and low-impact daily exercise schedules.",
             "diet": "Complex carbohydrates with low glycemic index, high-fiber legumes, whole grains, and minimal refined sugars or excess sodium.",
             "specialist": "Endocrinologist or Cardiologist for comprehensive metabolic panel and prescription management."
         }
     elif any(k in d_lower for k in ["migraine", "headache", "paralysis", "vertigo"]):
         return {
-            "overview": "Neurological or vascular episode affecting cranial nerves, cerebral blood flow, or vestibular balance.",
-            "home_care": "Rest in a quiet, dark, well-ventilated room. Apply cold compresses across forehead or temples. Avoid screen time and bright lights.",
+            "overview": "Neurological or vascular episode affecting cranial nerves, cerebral circulation, or vestibular balance.",
+            "home_care": "Rest in a quiet, dark, well-ventilated room. Apply cold compresses across forehead or temples. Avoid screen glare and loud sounds.",
             "diet": "Maintain regular meal schedules. Stay hydrated with electrolytes. Avoid aged cheeses, MSG, artificial sweeteners, and excess caffeine.",
-            "specialist": "Neurologist if headaches are sudden/severe ('thunderclap'), accompanied by visual loss, weakness, or numbness."
+            "specialist": "Neurologist if headaches are sudden/severe ('thunderclap'), accompanied by visual loss, motor weakness, or numbness."
         }
     else:
         return {
@@ -99,51 +100,57 @@ def get_offline_advice(
     """
     Generates rich, structured, condition-tailored clinical guidance completely offline without needing an API key.
     """
-    category_info = get_disease_category_guidance(disease)
-    emergency_text = ", ".join(emergency) if emergency else "None noted"
-    
-    # Vital alerts
-    vital_warnings = []
-    try:
-        if temperature and float(temperature) >= 38.5:
-            vital_warnings.append(f"Elevated body temperature ({temperature}°C) indicates active fever or systemic immune response.")
-        if spo2 and int(spo2) < 95:
-            vital_warnings.append(f"Borderline/Low Blood Oxygen Saturation ({spo2}%) requires close pulse oximetry monitoring.")
-    except Exception:
-        pass
+    guidance = get_disease_category_guidance(disease)
 
-    vital_warning_str = (" " + " ".join(vital_warnings)) if vital_warnings else ""
+    vitals_summary = []
+    if temperature:
+        vitals_summary.append(f"Temperature: {temperature}°C")
+    if spo2:
+        vitals_summary.append(f"Blood Oxygen (SpO2): {spo2}%")
+    vitals_str = ", ".join(vitals_summary) if vitals_summary else "Vitals within standard ranges or not recorded"
 
-    return f"""## Possible Health Assessment
-Based on the symptom profile and demographic indicators, the ML model identified **{disease}** as the primary potential condition.{vital_warning_str} Note that this is an educational screening assessment, not a confirmed clinical diagnosis.
+    emergency_warning = ""
+    if emergency and len(emergency) > 0:
+        emergency_warning = f"""
+## Urgent Clinical Warning
+> **CRITICAL RED-FLAG ALERT**: High-risk emergency symptoms were reported ({', '.join(emergency)}). 
+> **Immediate Action Required**: Do not wait for routine appointments. Please proceed to the nearest Emergency Department or call emergency medical services immediately.
+"""
 
-## Why this Condition May Fit
-The reported symptoms ({symptoms}) combined with a duration of {duration} and {severity.lower()} severity fit common presentation patterns for this condition. {category_info['overview']}
+    return f"""## Diagnostic Differential Assessment
+Based on the symptom profile presented ({symptoms}) and demographic indicators (Age: {age}, Gender: {gender}, BMI: {bmi}), the machine learning pattern analysis indicates **{disease}** as the primary differential consideration.
+{guidance['overview']}
 
-## Home Care & Recovery Protocol
-- {category_info['home_care']}
-- Ensure adequate physical rest and maintain continuous hydration (water, clear broths, oral electrolytes).
-- Keep a daily log of vitals (temperature, blood oxygen, pulse) and symptom changes.
+## Clinical Pattern Correlation
+- **Reported Duration**: {duration} with {severity.lower()} intensity ({progress or 'stable course'}).
+- **Observed Vitals**: {vitals_str}.
+- **Reported Exposure**: {contact or 'No known pathogen contact'}.
+- **Medical Background**: {history}.
+- **Calculated Risk Level**: **{risk} Risk** stratification.
+{emergency_warning}
+## Recommended Home Care & Supportive Protocol
+- {guidance['home_care']}
+- Ensure uninterrupted restorative rest and isolate if infectious symptoms are suspected.
+- Track temperature, pulse, and oxygen saturation every 4-6 hours.
 
-## Nutritional & Dietary Guidance
-- {category_info['diet']}
-- Avoid heavy, oily, overly processed foods, and refrain from alcohol or tobacco during recovery.
+## Evidence-Based Nutrition & Hydration
+- {guidance['diet']}
+- Maintain electrolyte balance with coconut water, light broths, or oral rehydration solutions.
+- Avoid heavy, greasy, or ultra-processed meals until gastrointestinal and systemic equilibrium is restored.
 
-## Red Flag Warning Signs (Seek Urgent Care)
-Seek immediate emergency medical attention if you experience:
-- Sudden chest tightness, shortness of breath, or SpO2 dropping below 92%.
-- High persistent fever unresponsive to antipyretics, severe confusion, or fainting.
-- Blue-tinted lips/face, severe abdominal rigidity, or uncontrollable vomiting.
-- *Emergency symptoms flagged:* {emergency_text}.
+## Critical Red Flags Requiring Immediate Emergency Care
+- Sudden severe chest pain, radiating left arm pain, or severe shortness of breath.
+- SpO2 dropping below 93% on room air.
+- Persistent high fever (>39.5°C / 103°F) unresponsive to antipyretics.
+- Sudden onset confusion, slurred speech, facial drooping, or limb weakness.
+- Inability to retain fluids for >24 hours with signs of severe dehydration.
 
-## When to Consult a Specialist
-- Schedule a clinical appointment with a **{category_info['specialist']}**.
-- Immediate in-person medical evaluation is advised if symptoms persist beyond 48–72 hours, worsen in intensity, or interact with known medical history ({history}).
+## Specialist & Next Steps
+- **Primary Recommendation**: Schedule a clinical consultation with a **{guidance['specialist']}**.
+- Bring this generated diagnostic summary report and a log of vital signs to your doctor for precision evaluation.
 
-## Important Clinical Note
-Fever, body pain, or headaches alone cannot pinpoint a definitive diagnosis. Many conditions share overlapping symptom profiles. Comprehensive lab investigations (blood tests, imaging) conducted by a licensed healthcare provider are necessary for accurate treatment.
-
-*Generated locally via MediAI Offline Clinical Intelligence Engine (No external API key required). For educational purposes only.*"""
+## Educational Disclaimer
+*MediAI 2.0 provides clinical intelligence for educational and triage triage assistance only. It is not an automated medical prescription or formal clinical diagnosis. Always seek direct medical guidance from qualified physicians.*"""
 
 
 def get_ai_advice(
@@ -163,12 +170,11 @@ def get_ai_advice(
     emergency=None
 ):
     """
-    Returns AI clinical guidance. Uses Groq LLM if API key is provided, or seamlessly
-    uses the enhanced Offline Clinical Intelligence Engine if no API key is set.
+    Calls Groq LLM if API key is provided; otherwise seamlessly returns high-grade offline clinical advice.
     """
-    api_key = os.getenv("GROQ_API_KEY")
+    api_key = os.getenv("GROQ_API_KEY", "").strip()
 
-    if not api_key or Groq is None or not str(api_key).strip():
+    if not api_key or Groq is None:
         return get_offline_advice(
             age=age,
             gender=gender,
@@ -189,79 +195,44 @@ def get_ai_advice(
     try:
         client = Groq(api_key=api_key)
 
-        prompt = f"""
-You are an experienced, empathetic AI Clinical Assistant.
+        prompt = f"""You are MediAI Clinical Intelligence Assistant. Provide a thorough, professional clinical assessment based on the patient's intake data below.
 
-IMPORTANT:
-This is an educational assessment, NOT a definitive medical diagnosis.
-Do not prescribe prescription medicines or make absolute medical guarantees.
+PATIENT PROFILE:
+- Age: {age} | Gender: {gender} | BMI: {bmi}
+- Primary ML Differential Disease Prediction: {disease}
+- Active Symptoms: {symptoms}
+- Duration: {duration} | Severity: {severity} | Progression: {progress or 'Stable'}
+- Body Temperature: {temperature or 'Not provided'} °C | SpO2: {spo2 or 'Not provided'} %
+- Known Exposure / Contact: {contact or 'None reported'}
+- Medical History: {history}
+- Emergency Symptoms: {', '.join(emergency) if emergency else 'None reported'}
+- Risk Level: {risk}
 
-=========================
-PATIENT DATA & CLINICAL PROFILE
-=========================
-- Age: {age} | Gender: {gender}
-- BMI: {bmi} | Overall Risk Level: {risk}
-- Temperature: {temperature if temperature else "Not Provided"} °C
-- SpO2 Oxygen Saturation: {spo2 if spo2 else "Not Provided"} %
-- Primary Symptoms: {symptoms}
-- Symptom Duration: {duration}
-- Severity: {severity}
-- Progression: {progress if progress else "Not Provided"}
-- Sick Contact Exposure: {contact if contact else "None"}
-- Past Medical History: {history}
-- Emergency Warning Symptoms: {", ".join(emergency) if emergency else "None"}
-- ML Predicted Condition: {disease}
+FORMAT YOUR RESPONSE EXACTLY USING THESE HEADINGS:
+## Diagnostic Differential Assessment
+## Clinical Pattern Correlation
+## Recommended Home Care & Supportive Protocol
+## Evidence-Based Nutrition & Hydration
+## Critical Red Flags Requiring Immediate Emergency Care
+## Specialist & Next Steps
+## Educational Disclaimer
 
-=========================
-YOUR TASK
-=========================
-Generate a well-structured clinical advice response using these exact markdown headers:
-
-## Possible Health Assessment
-Explain why {disease} is suggested as a possibility and what it generally means.
-
-## Why this Condition May Fit
-Explain the relationship between the reported symptoms ({symptoms}) and this condition.
-
-## Home Care & Recovery Protocol
-Provide clear self-care advice (rest, hydration, temperature management, monitoring).
-
-## Nutritional & Dietary Guidance
-Provide specific foods, fluids, and dietary habits that support immune recovery or gut health for this type of condition.
-
-## Red Flag Warning Signs (Seek Urgent Care)
-List critical signs (low oxygen, chest pressure, severe dehydration, breathing difficulty) that warrant immediate emergency attention.
-
-## When to Consult a Specialist
-Suggest the appropriate medical specialist (e.g. Pulmonologist, Gastroenterologist, ENT, General Physician) and timeline for in-person consultation.
-
-## Important Clinical Note
-Conclude with a brief reminder that many illnesses have overlapping symptoms and an in-person physical exam/lab test is needed. Include the educational disclaimer.
-
-Format cleanly with bullet points. Tone should be professional, empathetic, and objective.
-"""
+Maintain an empathetic, authoritative, clinical, and safety-first medical tone."""
 
         response = client.chat.completions.create(
             model="llama-3.3-70b-versatile",
             messages=[
-                {
-                    "role": "system",
-                    "content": "You are a professional clinical healthcare assistant providing educational health guidance and triage recommendations."
-                },
-                {
-                    "role": "user",
-                    "content": prompt
-                }
+                {"role": "system", "content": "You are a world-class AI clinical healthcare decision-support system. Provide evidence-based medical triage guidance and structured patient recommendations."},
+                {"role": "user", "content": prompt}
             ],
-            temperature=0.25,
-            max_tokens=800
+            temperature=0.3,
+            max_tokens=1024
         )
 
         return response.choices[0].message.content
 
     except Exception as e:
-        # Graceful fallback to offline engine if API call fails (network issue, quota, expired key)
-        print(f"Groq API call encountered: {e}. Falling back to offline clinical engine.")
+        print(f"Groq API call fallback triggered ({e}). Using local Clinical Intelligence engine.")
         return get_offline_advice(
             age=age,
             gender=gender,
@@ -278,3 +249,122 @@ Format cleanly with bullet points. Tone should be professional, empathetic, and 
             contact=contact,
             emergency=emergency
         )
+
+
+def get_chat_response(messages):
+    """
+    Conversational AI Assistant endpoint. Handles natural language questions, symptom triage,
+    and returns rich markdown responses with interactive suggestions.
+    """
+    api_key = os.getenv("GROQ_API_KEY", "").strip()
+
+    if api_key and Groq is not None:
+        try:
+            client = Groq(api_key=api_key)
+            formatted_messages = [
+                {
+                    "role": "system",
+                    "content": (
+                        "You are MediAI Assistant, a world-class AI clinical health companion. "
+                        "You help users understand their health symptoms, explain medical concepts in accessible terms, "
+                        "advise when to see a physician, and suggest next steps. "
+                        "Always prioritize safety, highlight red flags, and remind users that you are an AI health companion."
+                    )
+                }
+            ]
+            for m in messages:
+                formatted_messages.append({"role": m.get("role", "user"), "content": m.get("content", "")})
+
+            response = client.chat.completions.create(
+                model="llama-3.3-70b-versatile",
+                messages=formatted_messages,
+                temperature=0.5,
+                max_tokens=800
+            )
+            return response.choices[0].message.content
+        except Exception as e:
+            print(f"Groq chat fallback: {e}")
+
+    # OFFLINE INTELLIGENT CLINICAL CHATBOT FALLBACK
+    last_msg = messages[-1].get("content", "").lower() if messages else ""
+
+    # Check for emergency keywords
+    if any(k in last_msg for k in ["chest pain", "difficulty breathing", "heart attack", "stroke", "paralysis", "unconscious", "bleeding profusely", "suicide"]):
+        return (
+            "🚨 **URGENT MEDICAL ALERT**: The symptoms you described could indicate a life-threatening medical emergency.\n\n"
+            "**Immediate Steps**:\n"
+            "1. Call emergency services immediately (**911** or your local emergency number).\n"
+            "2. Do not attempt to drive yourself to the hospital.\n"
+            "3. Rest in a safe, seated or supported position while emergency medical personnel arrive.\n\n"
+            "If you are experiencing chest tightness, difficulty breathing, or sudden numbness, seek emergency medical attention without delay."
+        )
+
+    if any(k in last_msg for k in ["fever", "temperature", "chills"]):
+        return (
+            "🌡️ **Fever & Temperature Guidance**:\n\n"
+            "A fever is your body's immune response to an infection. Here is what you should know:\n\n"
+            "- **Temperature Classification**:\n"
+            "  - *Normal*: 36.5°C – 37.5°C (97.7°F – 99.5°F)\n"
+            "  - *Mild Fever*: 37.6°C – 38.4°C\n"
+            "  - *High Fever*: ≥ 38.5°C (101.3°F)\n\n"
+            "- **Home Management**:\n"
+            "  - Drink plenty of hydrating fluids (water, ORS, herbal broths).\n"
+            "  - Rest in a cool, ventilated room with light clothing.\n"
+            "  - Take a lukewarm sponge bath if needed.\n\n"
+            "- **When to see a doctor**:\n"
+            "  - Fever lasts more than 3 consecutive days.\n"
+            "  - Accompanied by stiff neck, shortness of breath, or confusion.\n\n"
+            "👉 *Tip: You can launch our full [AI Health Assessment](/assessment) to analyze related symptoms.*"
+        )
+
+    if any(k in last_msg for k in ["headache", "migraine", "head pain"]):
+        return (
+            "🧠 **Headache & Migraine Assessment**:\n\n"
+            "Headaches can range from tension and sinus pressure to migraines or vascular events.\n\n"
+            "- **Common Types**:\n"
+            "  - *Tension Headache*: Dull ache across both sides, band-like tightness.\n"
+            "  - *Migraine*: Throbbing on one side, sensitivity to light/sound, possible nausea.\n"
+            "  - *Sinus Headache*: Pressure behind eyes and forehead.\n\n"
+            "- **Supportive Care**:\n"
+            "  - Rest in a dark, quiet room with cold compress on forehead.\n"
+            "  - Hydrate with water and electrolytes.\n"
+            "  - Take a screen break and practice gentle neck stretches.\n\n"
+            "⚠️ **Seek Immediate Care If**: The headache is sudden and excruciating ('thunderclap'), accompanied by speech difficulty, vision loss, or weakness."
+        )
+
+    if any(k in last_msg for k in ["cough", "throat", "cold", "flu", "sneeze"]):
+        return (
+            "🫁 **Respiratory Symptoms Care Guide**:\n\n"
+            "- **Supportive Protocol**:\n"
+            "  - Steam inhalation 2 times daily to loosen mucus.\n"
+            "  - Warm salt-water gargle (1/2 tsp salt in warm water) for sore throat.\n"
+            "  - Warm tea with honey and ginger for soothing cough reflex.\n"
+            "  - Keep well-hydrated to help clear secretions.\n\n"
+            "- **Monitor Your Blood Oxygen (SpO2)**:\n"
+            "  - Normal SpO2 is **95% - 100%**.\n"
+            "  - If SpO2 drops below **94%** or you experience breathing distress, consult a physician promptly."
+        )
+
+    if any(k in last_msg for k in ["stomach", "acidity", "nausea", "vomiting", "diarrhea", "gerd"]):
+        return (
+            "🥣 **Gastrointestinal Care & Triage**:\n\n"
+            "- **Key Dietary Steps (BRAT Diet)**:\n"
+            "  - Bananas, Rice, Applesauce, and Toast.\n"
+            "  - Sip Oral Rehydration Solution (ORS) or electrolyte water.\n"
+            "  - Avoid fried, oily, spicy, dairy, and caffeinated items.\n\n"
+            "- **Acid Reflux / GERD Tips**:\n"
+            "  - Eat smaller meals.\n"
+            "  - Avoid lying flat for 2-3 hours after eating.\n"
+            "  - Elevate your head slightly when sleeping."
+        )
+
+    # General Greeting / Default response
+    return (
+        "👋 **Hello! I am MediAI Clinical Assistant.**\n\n"
+        "I can help you:\n"
+        "- 🔍 Understand specific symptoms (e.g., fever, cough, joint pain, migraine)\n"
+        "- 📊 Explain vitals and biometric targets (BMI, SpO2, Blood Pressure, Heart Rate)\n"
+        "- 🛡️ Provide evidence-based home care, nutrition, and safety red flags\n"
+        "- 🩺 Guide you to the right medical specialist\n\n"
+        "**How can I assist you today?** Describe what you are experiencing, or click [Start Health Assessment](/assessment) for a full multi-parameter diagnostic screening."
+    )

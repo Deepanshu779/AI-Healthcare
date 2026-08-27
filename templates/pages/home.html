@@ -1,0 +1,351 @@
+{% extends "base.html" %}
+
+{% block title %}MediAI 2.0 — AI Clinical Healthcare Intelligence & 3D Diagnostics{% endblock %}
+
+{% block content %}
+<!-- ==========================================================================
+     1. HERO SECTION WITH 3D WEBGL ENGINE
+     ========================================================================== -->
+<section class="hero-section">
+    <div class="container">
+        <div class="hero-grid">
+            <!-- Left Hero Content -->
+            <div class="hero-content">
+                <div class="hero-badge-wrap">
+                    <span class="hero-badge-dot"></span>
+                    <span>AI-POWERED CLINICAL HEALTH INTELLIGENCE</span>
+                </div>
+
+                <h1 class="hero-title">
+                    Precision Health <br>
+                    <span class="text-gradient">Diagnostic AI.</span>
+                </h1>
+
+                <p class="hero-subtitle">
+                    Transform complex symptoms into clear, actionable medical intelligence. Powered by 100% offline local machine learning, real-time biometrics analysis, and conversational triage.
+                </p>
+
+                <div class="hero-cta-group">
+                    <a href="/assessment" class="btn btn-primary btn-glow" style="padding: 14px 28px; font-size: 1rem;">
+                        <span>Start Clinical Assessment</span>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </a>
+
+                    <a href="/assistant" class="btn btn-secondary" style="padding: 14px 24px; font-size: 1rem;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                        <span>Talk to AI Assistant</span>
+                    </a>
+                </div>
+
+                <div class="hero-stat-row">
+                    <div class="hero-stat-item">
+                        <span class="stat-number text-gradient">41+</span>
+                        <span class="stat-label">Pathology Classes</span>
+                    </div>
+                    <div class="hero-stat-item">
+                        <span class="stat-number text-gradient">130+</span>
+                        <span class="stat-label">Symptom Ontology</span>
+                    </div>
+                    <div class="hero-stat-item">
+                        <span class="stat-number text-gradient">100%</span>
+                        <span class="stat-label">Offline & Private</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right 3D Visualizer Canvas & Floating HUD -->
+            <div class="hero-3d-visual-container">
+                <!-- Three.js Canvas Container -->
+                <div id="threeCanvasContainer" title="Drag to rotate 3D Bio-Sphere"></div>
+
+                <!-- Floating 3D HUD Badges -->
+                <div class="floating-hud hud-top-right">
+                    <div class="hud-icon-wrap">
+                        <span>🧬</span>
+                    </div>
+                    <div>
+                        <div class="hud-title">Bio-Neural Matrix</div>
+                        <div class="hud-subtitle">Sub-10ms Inference</div>
+                    </div>
+                </div>
+
+                <div class="floating-hud hud-bottom-left">
+                    <div class="hud-icon-wrap green">
+                        <span>✓</span>
+                    </div>
+                    <div>
+                        <div class="hud-title">Zero Data Leakage</div>
+                        <div class="hud-subtitle">Local On-Device Engine</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==========================================================================
+     2. 3D ANATOMICAL BODY SYSTEM EXPLORER
+     ========================================================================== -->
+<section class="anatomy-section" id="anatomy">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-pill">Interactive Exploration</span>
+            <h2 class="section-title">Explore Physiological Systems</h2>
+            <p class="section-desc">
+                Select an anatomical system to explore common symptoms and launch a targeted differential assessment.
+            </p>
+        </div>
+
+        <div class="anatomy-grid">
+            <!-- Respiratory System -->
+            <div class="anatomy-card" style="--card-color: #34d399; --card-bg: rgba(52, 211, 153, 0.1); --card-glow: rgba(52, 211, 153, 0.25);">
+                <div class="anatomy-card-icon">🫁</div>
+                <h3>Respiratory & Pulmonary</h3>
+                <p>Airways, lung ventilation, oxygenation exchange, cough and bronchial patterns.</p>
+                <div class="anatomy-symptoms-list">
+                    <span class="anatomy-symptom-tag">cough</span>
+                    <span class="anatomy-symptom-tag">breathlessness</span>
+                    <span class="anatomy-symptom-tag">chest_pain</span>
+                    <span class="anatomy-symptom-tag">phlegm</span>
+                </div>
+                <a href="/assessment?category=respiratory" class="anatomy-card-action">
+                    <span>Assess Respiratory →</span>
+                </a>
+            </div>
+
+            <!-- Cardiovascular System -->
+            <div class="anatomy-card" style="--card-color: #f43f5e; --card-bg: rgba(244, 63, 94, 0.1); --card-glow: rgba(244, 63, 94, 0.25);">
+                <div class="anatomy-card-icon">❤️</div>
+                <h3>Cardiovascular & Circulatory</h3>
+                <p>Cardiac rhythm, blood vessel circulation, arterial pressure, and palpitations.</p>
+                <div class="anatomy-symptoms-list">
+                    <span class="anatomy-symptom-tag">chest_pain</span>
+                    <span class="anatomy-symptom-tag">palpitations</span>
+                    <span class="anatomy-symptom-tag">fast_heart_rate</span>
+                    <span class="anatomy-symptom-tag">swollen_legs</span>
+                </div>
+                <a href="/assessment?category=cardiovascular" class="anatomy-card-action">
+                    <span>Assess Cardiovascular →</span>
+                </a>
+            </div>
+
+            <!-- Neurological System -->
+            <div class="anatomy-card" style="--card-color: #a855f7; --card-bg: rgba(168, 85, 247, 0.1); --card-glow: rgba(168, 85, 247, 0.25);">
+                <div class="anatomy-card-icon">🧠</div>
+                <h3>Neurological & Sensory</h3>
+                <p>Cranial nerves, balance, migraine pathways, motor function, and vestibular health.</p>
+                <div class="anatomy-symptoms-list">
+                    <span class="anatomy-symptom-tag">headache</span>
+                    <span class="anatomy-symptom-tag">dizziness</span>
+                    <span class="anatomy-symptom-tag">loss_of_balance</span>
+                    <span class="anatomy-symptom-tag">blurred_vision</span>
+                </div>
+                <a href="/assessment?category=neurological" class="anatomy-card-action">
+                    <span>Assess Neurological →</span>
+                </a>
+            </div>
+
+            <!-- Digestive System -->
+            <div class="anatomy-card" style="--card-color: #fbbf24; --card-bg: rgba(251, 191, 36, 0.1); --card-glow: rgba(251, 191, 36, 0.25);">
+                <div class="anatomy-card-icon">🥣</div>
+                <h3>Digestive & Gastrointestinal</h3>
+                <p>Gastric motility, esophageal acid balance, hepatic function, and abdominal symptoms.</p>
+                <div class="anatomy-symptoms-list">
+                    <span class="anatomy-symptom-tag">stomach_pain</span>
+                    <span class="anatomy-symptom-tag">acidity</span>
+                    <span class="anatomy-symptom-tag">vomiting</span>
+                    <span class="anatomy-symptom-tag">nausea</span>
+                </div>
+                <a href="/assessment?category=digestive" class="anatomy-card-action">
+                    <span>Assess Digestive →</span>
+                </a>
+            </div>
+
+            <!-- Musculoskeletal System -->
+            <div class="anatomy-card" style="--card-color: #f97316; --card-bg: rgba(249, 115, 22, 0.1); --card-glow: rgba(249, 115, 22, 0.25);">
+                <div class="anatomy-card-icon">🦴</div>
+                <h3>Musculoskeletal & Joints</h3>
+                <p>Joint inflammation, cartilage integrity, muscular fatigue, and spinal mobility.</p>
+                <div class="anatomy-symptoms-list">
+                    <span class="anatomy-symptom-tag">joint_pain</span>
+                    <span class="anatomy-symptom-tag">muscle_pain</span>
+                    <span class="anatomy-symptom-tag">stiff_neck</span>
+                    <span class="anatomy-symptom-tag">cramps</span>
+                </div>
+                <a href="/assessment?category=musculoskeletal" class="anatomy-card-action">
+                    <span>Assess Musculoskeletal →</span>
+                </a>
+            </div>
+
+            <!-- Dermatology System -->
+            <div class="anatomy-card" style="--card-color: #ec4899; --card-bg: rgba(236, 72, 153, 0.1); --card-glow: rgba(236, 72, 153, 0.25);">
+                <div class="anatomy-card-icon">✨</div>
+                <h3>Dermatology & Allergic</h3>
+                <p>Cutaneous barriers, epidermal eruptions, allergic histamine response, and rashes.</p>
+                <div class="anatomy-symptoms-list">
+                    <span class="anatomy-symptom-tag">itching</span>
+                    <span class="anatomy-symptom-tag">skin_rash</span>
+                    <span class="anatomy-symptom-tag">blister</span>
+                    <span class="anatomy-symptom-tag">nodal_eruptions</span>
+                </div>
+                <a href="/assessment?category=dermatology" class="anatomy-card-action">
+                    <span>Assess Dermatology →</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==========================================================================
+     3. LIVE 3D MEDICAL CALCULATORS & VITALS WIDGETS
+     ========================================================================== -->
+<section class="calculators-section" id="calculators">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-pill">Real-Time Biometrics</span>
+            <h2 class="section-title">Clinical Vitals & Health Calculators</h2>
+            <p class="section-desc">
+                Instant physiological calculations for Body Mass Index, Basal Metabolic Rate, and Hydration targets.
+            </p>
+        </div>
+
+        <div class="calc-grid">
+            <!-- BMI & BMR Card -->
+            <div class="calc-card">
+                <div class="calc-card-header">
+                    <div class="calc-title-group">
+                        <div class="calc-icon">⚡</div>
+                        <div>
+                            <h3>Biometric Calibration</h3>
+                            <p style="color: var(--text-muted); font-size: 0.8rem;">BMI & Basal Metabolic Engine</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="calc-input-group">
+                    <div class="calc-label-row">
+                        <span>Height (cm)</span>
+                        <span id="heightDisplay" style="color: var(--primary);">170 cm</span>
+                    </div>
+                    <input type="number" id="calcHeight" class="calc-input" value="170" min="50" max="250">
+                </div>
+
+                <div class="calc-input-group">
+                    <div class="calc-label-row">
+                        <span>Weight (kg)</span>
+                        <span id="weightDisplay" style="color: var(--primary);">68 kg</span>
+                    </div>
+                    <input type="number" id="calcWeight" class="calc-input" value="68" min="20" max="250">
+                </div>
+
+                <div class="calc-input-group">
+                    <div class="calc-label-row">
+                        <span>Age (Years)</span>
+                        <span style="color: var(--primary);">30</span>
+                    </div>
+                    <input type="number" id="calcAge" class="calc-input" value="30" min="1" max="120">
+                </div>
+
+                <!-- HUD Readout -->
+                <div class="calc-display-hud">
+                    <div class="hud-metric-box">
+                        <span class="hud-metric-val" id="calcBmiVal">23.5</span>
+                        <span class="hud-metric-label">BMI (<span id="calcBmiStatus" style="color: var(--success);">Normal</span>)</span>
+                    </div>
+                    <div style="width: 1px; height: 40px; background: var(--border-subtle);"></div>
+                    <div class="hud-metric-box">
+                        <span class="hud-metric-val" id="calcBmrVal" style="color: #38bdf8;">1675 kcal</span>
+                        <span class="hud-metric-label">Daily BMR</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Daily Hydration & Target HR Card -->
+            <div class="calc-card">
+                <div class="calc-card-header">
+                    <div class="calc-title-group">
+                        <div class="calc-icon" style="color: #34d399; background: rgba(52, 211, 153, 0.1); border-color: rgba(52, 211, 153, 0.3);">💧</div>
+                        <div>
+                            <h3>Physiological Targets</h3>
+                            <p style="color: var(--text-muted); font-size: 0.8rem;">Fluid Requirement & HR Zones</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="calc-display-hud" style="margin-top: 10px; margin-bottom: 24px;">
+                    <div class="hud-metric-box">
+                        <span class="hud-metric-val" id="calcHydrationVal" style="color: #34d399;">2.4 L / day</span>
+                        <span class="hud-metric-label">Recommended Water</span>
+                    </div>
+                </div>
+
+                <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 20px;">
+                    <h4 style="font-size: 0.95rem; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                        <span>💓</span> Cardiovascular Target Zones
+                    </h4>
+                    <div style="display: flex; flex-direction: column; gap: 10px; font-size: 0.85rem;">
+                        <div style="display: flex; justify-content: space-between; color: var(--text-secondary);">
+                            <span>Moderate Aerobic (50-70%)</span>
+                            <strong style="color: var(--text-main);">95 - 133 bpm</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; color: var(--text-secondary);">
+                            <span>Vigorous Cardio (70-85%)</span>
+                            <strong style="color: var(--text-main);">133 - 161 bpm</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; color: var(--text-secondary);">
+                            <span>Max Heart Rate</span>
+                            <strong style="color: var(--danger);">190 bpm</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px; text-align: center;">
+                    <a href="/assessment" class="btn btn-primary btn-full">
+                        <span>Apply Vitals to Full Assessment →</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==========================================================================
+     4. CLINICAL SAFETY & ARCHITECTURE
+     ========================================================================== -->
+<section class="safety-section" id="safety" style="padding: 60px 0;">
+    <div class="container">
+        <div style="background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); border-radius: var(--radius-xl); padding: 48px 36px; display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 40px; align-items: center;">
+            <div>
+                <span class="section-pill" style="color: #ef4444; background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3);">Safety Architecture</span>
+                <h2 style="font-size: 2.2rem; margin-bottom: 16px;">Engineered for Clinical Safety</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 20px; line-height: 1.65;">
+                    MediAI 2.0 implements automatic red-flag symptom screening. When critical markers (such as hypoxic SpO2, severe chest distress, or sudden neurological deficits) are detected, emergency medical escalation alerts are prioritized immediately over routine care guidance.
+                </p>
+                <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+                    <span class="f-badge"><span class="f-dot green"></span> HIPAA-Conscious Architecture</span>
+                    <span class="f-badge"><span class="f-dot"></span> Offline ML Differential</span>
+                    <span class="f-badge"><span class="f-dot" style="background: #ef4444;"></span> Emergency Escalation</span>
+                </div>
+            </div>
+
+            <div style="background: var(--bg-surface); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: var(--radius-lg); padding: 24px;">
+                <div style="display: flex; align-items: center; gap: 10px; color: #ef4444; font-weight: 700; margin-bottom: 12px;">
+                    <span style="font-size: 1.2rem;">⚠️</span>
+                    <span>Emergency Warning Protocol</span>
+                </div>
+                <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 16px;">
+                    If you or someone around you experiences crushing chest pain, paralysis, blue lips/fingers, or sudden unresponsiveness, do not wait for online triage. Call emergency services (911) immediately.
+                </p>
+                <a href="/assessment" class="btn btn-secondary btn-full" style="font-size: 0.85rem;">
+                    <span>Launch Guided Triage Protocol</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

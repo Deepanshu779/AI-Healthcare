@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="MediAI 2.0 — Next-Gen 3D AI-Powered Healthcare Diagnostic & Clinical Triage Intelligence Platform.">
+    <meta name="theme-color" content="#030712">
+
+    <title>{% block title %}MediAI 2.0 — AI Clinical Healthcare Intelligence{% endblock %}</title>
+
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/logo/mediai-2.0-icon.png') }}">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='images/logo/mediai-2.0-icon.png') }}">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Three.js 3D WebGL Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- Global Design System & Page Stylesheets -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pages.css') }}">
+
+    {% block styles %}{% endblock %}
+
+    <!-- Theme State Initializer to Prevent Flash -->
+    <script>
+        (function () {
+            try {
+                const saved = localStorage.getItem("mediai-theme");
+                if (saved) {
+                    document.documentElement.dataset.theme = saved;
+                } else {
+                    const dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+                    document.documentElement.dataset.theme = dark ? "dark" : "light";
+                }
+            } catch (e) {
+                document.documentElement.dataset.theme = "dark";
+            }
+        })();
+    </script>
+</head>
+
+<body class="mediai-body">
+    <!-- Ambient 3D Glow & Grid Background -->
+    <div class="ambient-background">
+        <div class="glow-orb orb-primary"></div>
+        <div class="glow-orb orb-secondary"></div>
+        <div class="glow-orb orb-tertiary"></div>
+        <div class="cyber-grid"></div>
+    </div>
+
+    <!-- Navigation Header -->
+    {% include "components/navbar.html" %}
+
+    <!-- Main Content Container -->
+    <main id="main-content" class="main-wrapper">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    {% include "components/footer.html" %}
+
+    <!-- Core Scripts -->
+    <script src="{{ url_for('static', filename='js/three-scene.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+    {% block scripts %}{% endblock %}
+</body>
+
+</html>

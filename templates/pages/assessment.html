@@ -1,0 +1,381 @@
+{% extends "base.html" %}
+
+{% block title %}Clinical Assessment Wizard — MediAI 2.0{% endblock %}
+
+{% block content %}
+<div class="assessment-page-wrapper">
+    <div class="container">
+        <!-- Wizard Title -->
+        <div style="text-align: center; margin-bottom: 36px;">
+            <span class="section-pill">Clinical Intake Wizard</span>
+            <h1 style="font-size: 2.4rem; margin-top: 8px;">Multi-Parameter Health Assessment</h1>
+            <p style="color: var(--text-secondary); max-width: 620px; margin: 8px auto 0;">
+                Complete the 4-step intake below. Our offline machine-learning engine analyzes biometric parameters and symptom patterns to generate a comprehensive differential report.
+            </p>
+        </div>
+
+        {% if error %}
+        <div style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.35); padding: 16px 20px; border-radius: var(--radius-md); margin-bottom: 24px; color: #fca5a5; display: flex; align-items: center; gap: 12px;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <span>{{ error }}</span>
+        </div>
+        {% endif %}
+
+        <!-- Wizard Progress Bar & Step Nodes -->
+        <div class="wizard-progress-bar-wrap">
+            <div class="wizard-steps-indicators">
+                <!-- Step 1 Node -->
+                <div class="wizard-step-node active" data-step="1">
+                    <div class="step-circle">1</div>
+                    <div class="step-label-group">
+                        <span class="step-index-tag">Step 01</span>
+                        <span class="step-name">Patient Profile</span>
+                    </div>
+                </div>
+
+                <!-- Step 2 Node -->
+                <div class="wizard-step-node" data-step="2">
+                    <div class="step-circle">2</div>
+                    <div class="step-label-group">
+                        <span class="step-index-tag">Step 02</span>
+                        <span class="step-name">Biometrics & Vitals</span>
+                    </div>
+                </div>
+
+                <!-- Step 3 Node -->
+                <div class="wizard-step-node" data-step="3">
+                    <div class="step-circle">3</div>
+                    <div class="step-label-group">
+                        <span class="step-index-tag">Step 03</span>
+                        <span class="step-name">Symptom Selector</span>
+                    </div>
+                </div>
+
+                <!-- Step 4 Node -->
+                <div class="wizard-step-node" data-step="4">
+                    <div class="step-circle">4</div>
+                    <div class="step-label-group">
+                        <span class="step-index-tag">Step 04</span>
+                        <span class="step-name">Clinical Context</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAIN FORM -->
+        <form id="clinicalAssessmentForm" action="/predict" method="POST">
+            <!-- ==========================================================
+                 STEP 1: PATIENT PROFILE
+                 ========================================================== -->
+            <div class="wizard-step-panel active" id="stepPanel1">
+                <div class="panel-header">
+                    <div class="panel-icon-wrap">👤</div>
+                    <div>
+                        <h2 style="font-size: 1.4rem;">Patient Demographics</h2>
+                        <p style="color: var(--text-secondary); font-size: 0.88rem;">Biographical indicators to calibrate age and gender-adjusted physiological risks.</p>
+                    </div>
+                </div>
+
+                <div class="form-grid-3">
+                    <div>
+                        <label for="name" class="input-label">Full Patient Name <span class="input-hint" style="color: var(--primary);">(Required)</span></label>
+                        <input type="text" id="name" name="name" class="form-control" placeholder="e.g. Sarah Connor" value="Alex Morgan" required>
+                    </div>
+
+                    <div>
+                        <label for="age" class="input-label">Age (Years) <span class="input-hint">(1 - 120)</span></label>
+                        <input type="number" id="age" name="age" class="form-control" min="1" max="120" placeholder="32" value="32" required>
+                    </div>
+
+                    <div>
+                        <label for="gender" class="input-label">Biological Gender <span class="input-hint">(Required)</span></label>
+                        <select id="gender" name="gender" class="form-control" required>
+                            <option value="Male">Male</option>
+                            <option value="Female" selected>Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==========================================================
+                 STEP 2: BIOMETRICS & VITALS
+                 ========================================================== -->
+            <div class="wizard-step-panel" id="stepPanel2">
+                <div class="panel-header">
+                    <div class="panel-icon-wrap">💓</div>
+                    <div>
+                        <h2 style="font-size: 1.4rem;">Biometrics & Physiological Vitals</h2>
+                        <p style="color: var(--text-secondary); font-size: 0.88rem;">Physical measurements, body temperature, and pulse oximetry monitoring.</p>
+                    </div>
+                </div>
+
+                <div class="form-grid-4">
+                    <div>
+                        <label for="height" class="input-label">Height (cm)</label>
+                        <input type="number" id="height" name="height" class="form-control" value="168" min="50" max="250" required>
+                    </div>
+
+                    <div>
+                        <label for="weight" class="input-label">Weight (kg)</label>
+                        <input type="number" id="weight" name="weight" class="form-control" value="62" min="10" max="300" required>
+                    </div>
+
+                    <div>
+                        <label for="temperature" class="input-label">Body Temp (°C) <span class="input-hint">e.g. 37.2</span></label>
+                        <input type="number" step="0.1" id="temperature" name="temperature" class="form-control" placeholder="37.0" value="37.4">
+                    </div>
+
+                    <div>
+                        <label for="spo2" class="input-label">Blood Oxygen (% SpO2) <span class="input-hint">e.g. 98</span></label>
+                        <input type="number" id="spo2" name="spo2" class="form-control" min="50" max="100" placeholder="98" value="98">
+                    </div>
+                </div>
+
+                <!-- Live Vitals Feedback Gauges -->
+                <div class="vitals-live-gauge-strip">
+                    <div class="live-gauge-item">
+                        <div style="font-size: 1.8rem;">⚖️</div>
+                        <div>
+                            <div style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">Live BMI</div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span class="live-gauge-val" id="liveBmiVal">22.0</span>
+                                <span class="live-gauge-status" id="liveBmiBadge">Normal</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="live-gauge-item">
+                        <div style="font-size: 1.8rem;">🌡️</div>
+                        <div>
+                            <div style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">Temp Status</div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span class="live-gauge-val" id="liveTempVal">37.4°C</span>
+                                <span class="live-gauge-status" id="liveTempBadge">Normal</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="live-gauge-item">
+                        <div style="font-size: 1.8rem;">🫁</div>
+                        <div>
+                            <div style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">Oxygen Saturation</div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span class="live-gauge-val" id="liveSpo2Val">98%</span>
+                                <span class="live-gauge-status" id="liveSpo2Badge">Optimal</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==========================================================
+                 STEP 3: 130+ SYMPTOM SELECTOR
+                 ========================================================== -->
+            <div class="wizard-step-panel" id="stepPanel3">
+                <div class="panel-header">
+                    <div class="panel-icon-wrap">🧬</div>
+                    <div>
+                        <h2 style="font-size: 1.4rem;">Multi-System Symptom Selector</h2>
+                        <p style="color: var(--text-secondary); font-size: 0.88rem;">Select all active symptoms. Search or filter across 8 anatomical systems.</p>
+                    </div>
+                </div>
+
+                <!-- Search Input -->
+                <div class="symptom-search-bar">
+                    <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" id="symptomSearch" class="symptom-search-input" placeholder="Search across 130+ symptoms (e.g. fever, headache, cough, rash, fatigue)...">
+                </div>
+
+                <!-- Category Filters -->
+                <div class="category-filter-bar">
+                    <button type="button" class="cat-filter-btn active" data-cat="all">All Systems</button>
+                    {% for cat_key, cat_data in symptom_catalog.items() %}
+                    <button type="button" class="cat-filter-btn" data-cat="{{ cat_key }}">{{ cat_data.name }}</button>
+                    {% endfor %}
+                </div>
+
+                <!-- Symptom Chips Grid -->
+                <div class="symptom-chips-container" id="symptomGrid">
+                    {% for cat_key, cat_data in symptom_catalog.items() %}
+                        {% for symp in cat_data.symptoms %}
+                        <div class="symptom-chip" data-name="{{ symp | replace('_', ' ') }}" data-cat="{{ cat_key }}">
+                            <input type="checkbox" name="symptoms" value="{{ symp }}" id="symp_{{ symp }}">
+                            <label for="symp_{{ symp }}" class="symptom-chip-name">{{ symp | replace('_', ' ') }}</label>
+                        </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+
+                <!-- Selected Count Bar -->
+                <div class="selected-counter-bar">
+                    <div>
+                        <span>Selected Symptoms: </span>
+                        <strong id="selectedSymptomCount" style="color: var(--primary); font-size: 1rem;">0</strong>
+                    </div>
+                    <button type="button" id="clearSymptomsBtn" style="background: none; border: none; color: var(--text-muted); cursor: pointer; text-decoration: underline; font-size: 0.8rem;">
+                        Clear All
+                    </button>
+                </div>
+
+                <!-- Custom Symptom Textarea -->
+                <div style="margin-top: 20px;">
+                    <label for="other_symptoms" class="input-label">Other Specific Symptoms or Natural Language Notes</label>
+                    <input type="text" id="other_symptoms" name="other_symptoms" class="form-control" placeholder="Type other symptoms separated by commas (e.g. mild throat tickle, sensitivity to bright lights)...">
+                </div>
+            </div>
+
+            <!-- ==========================================================
+                 STEP 4: CLINICAL CONTEXT & RED-FLAG TRIAGE
+                 ========================================================== -->
+            <div class="wizard-step-panel" id="stepPanel4">
+                <div class="panel-header">
+                    <div class="panel-icon-wrap">🛡️</div>
+                    <div>
+                        <h2 style="font-size: 1.4rem;">Clinical Context & Safety Flags</h2>
+                        <p style="color: var(--text-secondary); font-size: 0.88rem;">Onset duration, progression pattern, medical background, and emergency indicators.</p>
+                    </div>
+                </div>
+
+                <div class="form-grid-2">
+                    <div>
+                        <label for="duration" class="input-label">Symptom Duration</label>
+                        <select id="duration" name="duration" class="form-control">
+                            <option value="Less than 24 hours">Less than 24 hours (Acute onset)</option>
+                            <option value="1-3 Days" selected>1-3 Days</option>
+                            <option value="4-7 Days">4-7 Days (Subacute)</option>
+                            <option value="1-2 Weeks">1-2 Weeks</option>
+                            <option value="More than 2 weeks">More than 2 weeks (Chronic course)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="severity" class="input-label">Self-Perceived Severity</label>
+                        <select id="severity" name="severity" class="form-control">
+                            <option value="Mild" selected>Mild (Manageable at home)</option>
+                            <option value="Moderate">Moderate (Impacts daily activities)</option>
+                            <option value="Severe">Severe (Significant distress)</option>
+                            <option value="Critical">Critical (Incapacitating)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="progress" class="input-label">Symptom Progression</label>
+                        <select id="progress" name="progress" class="form-control">
+                            <option value="Improving">Improving</option>
+                            <option value="Stable" selected>Stable / Unchanged</option>
+                            <option value="Worsening">Worsening progressively</option>
+                            <option value="Fluctuating">Fluctuating / Intermittent</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="contact" class="input-label">Exposure & Contact History</label>
+                        <select id="contact" name="contact" class="form-control">
+                            <option value="No known exposure" selected>No known infectious exposure</option>
+                            <option value="Sick contact at home or work">Known contact with infected individual</option>
+                            <option value="Recent travel">Recent domestic or international travel</option>
+                            <option value="Possible contaminated food/water">Possible food or waterborne exposure</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Medical History Options -->
+                <div style="margin-top: 18px;">
+                    <label class="input-label">Pre-Existing Conditions & Medical History</label>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-top: 8px;">
+                        <label class="symptom-chip" style="padding: 8px 12px;">
+                            <input type="checkbox" name="history" value="Asthma / Respiratory Disease">
+                            <span>Asthma / Respiratory</span>
+                        </label>
+                        <label class="symptom-chip" style="padding: 8px 12px;">
+                            <input type="checkbox" name="history" value="Diabetes Mellitus">
+                            <span>Diabetes Mellitus</span>
+                        </label>
+                        <label class="symptom-chip" style="padding: 8px 12px;">
+                            <input type="checkbox" name="history" value="Hypertension / Cardiac">
+                            <span>Hypertension / Cardiac</span>
+                        </label>
+                        <label class="symptom-chip" style="padding: 8px 12px;">
+                            <input type="checkbox" name="history" value="Immunocompromised">
+                            <span>Immunocompromised</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Emergency Red-Flag Triage -->
+                <div class="emergency-flags-box">
+                    <div class="emergency-flags-header">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                        <span>Emergency Red-Flag Screening (Check any that apply)</span>
+                    </div>
+
+                    <div class="emergency-options-grid">
+                        <label class="emergency-label">
+                            <input type="checkbox" name="emergency" value="Severe chest pressure or pain" style="accent-color: #ef4444;">
+                            <span>Severe crushing chest pain</span>
+                        </label>
+                        <label class="emergency-label">
+                            <input type="checkbox" name="emergency" value="Severe difficulty breathing" style="accent-color: #ef4444;">
+                            <span>Severe breathing distress</span>
+                        </label>
+                        <label class="emergency-label">
+                            <input type="checkbox" name="emergency" value="Sudden limb numbness or facial drooping" style="accent-color: #ef4444;">
+                            <span>Facial droop / limb weakness</span>
+                        </label>
+                        <label class="emergency-label">
+                            <input type="checkbox" name="emergency" value="Loss of consciousness or confusion" style="accent-color: #ef4444;">
+                            <span>Sudden confusion / fainting</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==========================================================
+                 WIZARD CONTROLS (PREV / NEXT / SUBMIT)
+                 ========================================================== -->
+            <div class="wizard-nav-controls">
+                <button type="button" id="wizardPrevBtn" class="btn btn-secondary" style="display: none;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                    <span>Previous Step</span>
+                </button>
+
+                <div style="display: flex; gap: 12px; margin-left: auto;">
+                    <button type="button" id="wizardNextBtn" class="btn btn-primary btn-glow">
+                        <span>Continue to Next Step</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </button>
+
+                    <button type="submit" id="wizardSubmitBtn" class="btn btn-primary btn-glow" style="display: none; background: linear-gradient(135deg, #10b981, #00f2fe);">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        <span>Generate Diagnostic Assessment →</span>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/assessment.js') }}"></script>
+{% endblock %}

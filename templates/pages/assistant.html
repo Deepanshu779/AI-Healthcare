@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Conversational AI Clinical Assistant — MediAI 2.0{% endblock %}
+
+{% block content %}
+<div class="assistant-page-container">
+    <!-- Header -->
+    <div style="text-align: center; margin-bottom: 24px;">
+        <span class="section-pill">Live Clinical Companion</span>
+        <h1 style="font-size: 2.2rem; margin-top: 6px;">MediAI Health Assistant</h1>
+        <p style="color: var(--text-secondary); font-size: 0.95rem; max-width: 580px; margin: 4px auto 0;">
+            Describe what you're experiencing or ask questions about symptoms, vitals, and home supportive care.
+        </p>
+    </div>
+
+    <!-- Chat Console Card -->
+    <div class="chat-console-card">
+        <!-- Chat Console Header -->
+        <div class="chat-console-header">
+            <div class="chat-bot-info">
+                <div class="chat-bot-avatar">✦</div>
+                <div>
+                    <div style="font-weight: 700; font-size: 1rem; color: var(--text-main);">MediAI Intelligence</div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">
+                        <span class="chat-status-dot"></span>
+                        <span>Clinical Triage Mode • Active</span>
+                    </div>
+                </div>
+            </div>
+
+            <a href="/assessment" class="btn btn-secondary" style="padding: 6px 14px; font-size: 0.78rem;">
+                <span>Launch Full Assessment →</span>
+            </a>
+        </div>
+
+        <!-- Chat Messages Stream -->
+        <div class="chat-messages-stream" id="chatMessagesStream">
+            <!-- Initial Greeting Bot Message -->
+            <div class="chat-message-row bot">
+                <div class="msg-bubble">
+                    <strong>👋 Hello! I am MediAI Clinical Assistant.</strong><br><br>
+                    I can help explain symptoms, analyze vitals targets, provide evidence-based supportive home protocols, and guide you on when to seek immediate emergency care.<br><br>
+                    <em>How are you feeling today? You can type your symptoms or click any quick prompt below.</em>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Suggestion Chips Strip -->
+        <div class="chat-suggestions-strip">
+            <div class="suggestion-chip" data-prompt="What should I do if I have a persistent dry cough and mild fever?">
+                🌡️ Cough & Fever Care
+            </div>
+            <div class="suggestion-chip" data-prompt="How do I distinguish a tension headache from a migraine?">
+                🧠 Migraine vs Tension
+            </div>
+            <div class="suggestion-chip" data-prompt="What is a normal SpO2 blood oxygen level and when is it dangerous?">
+                🫁 Blood Oxygen (SpO2)
+            </div>
+            <div class="suggestion-chip" data-prompt="What are the critical red flags that require visiting the Emergency Room?">
+                🚨 Emergency Red Flags
+            </div>
+            <div class="suggestion-chip" data-prompt="What dietary steps help relieve acid reflux and stomach acidity?">
+                🥣 GERD & Acid Relief
+            </div>
+        </div>
+
+        <!-- Chat Input Area -->
+        <div class="chat-input-area">
+            <input type="text" id="chatInput" class="chat-text-input" placeholder="Type your symptoms or clinical question here (e.g. sore throat for 3 days)..." autocomplete="off">
+            <button type="button" id="chatSendBtn" class="btn btn-primary" style="border-radius: var(--radius-pill); padding: 12px 20px;">
+                <span>Send</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/assistant.js') }}"></script>
+{% endblock %}
