@@ -404,21 +404,15 @@ Add screenshots here to make the repository more visually appealing:
 ## 📸 Screenshots
 
 ### Home
-![MediAI Home](static/images/home.png)
+<img width="1687" height="882" alt="Screenshot 2026-08-27 103408" src="https://github.com/user-attachments/assets/455b3987-c712-4a0f-8145-bdb4d24eeced" />
 
 ### Health Assessment
-![Assessment](static/images/assessment.png)
+<img width="1575" height="888" alt="Screenshot 2026-08-27 103427" src="https://github.com/user-attachments/assets/4443f5d1-538b-4e30-8972-a90cb313fdcc" />
 
 ### Results Dashboard
-![Results](static/images/results.png)
+<img width="1682" height="777" alt="Screenshot 2026-08-27 103453" src="https://github.com/user-attachments/assets/ddf1248e-c1e2-49ee-8df6-1d35b3a44df1" />
 
-### AI Assistant
-![Assistant](static/images/assistant.png)
 ```
-
-Replace the filenames above with the actual images you want to showcase.
-
----
 
 ## 🎯 What This Project Demonstrates
 
