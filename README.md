@@ -404,13 +404,13 @@ Add screenshots here to make the repository more visually appealing:
 ## 📸 Screenshots
 
 ### Home
-<img width="1687" height="882" alt="Screenshot 2026-08-27 103408" src="https://github.com/user-attachments/assets/455b3987-c712-4a0f-8145-bdb4d24eeced" />
+<img width="1687" height="882" alt="Screenshot 2026-08-27 103408" src="https://github.com/user-attachments/assets/e1eee86a-b5a8-4839-bc0d-dcff2a15333a" />
 
 ### Health Assessment
-<img width="1575" height="888" alt="Screenshot 2026-08-27 103427" src="https://github.com/user-attachments/assets/4443f5d1-538b-4e30-8972-a90cb313fdcc" />
+<img width="1575" height="888" alt="Screenshot 2026-08-27 103427" src="https://github.com/user-attachments/assets/f05a8aad-bf29-4249-9502-20c67a4f9d55" />
 
 ### Results Dashboard
-<img width="1682" height="777" alt="Screenshot 2026-08-27 103453" src="https://github.com/user-attachments/assets/ddf1248e-c1e2-49ee-8df6-1d35b3a44df1" />
+<img width="1682" height="777" alt="Screenshot 2026-08-27 103453" src="https://github.com/user-attachments/assets/3abc92cb-4cab-4b9b-907a-e6f4c5b47f55" />
 
 ```
 
