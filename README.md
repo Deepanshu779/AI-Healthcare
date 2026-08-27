@@ -398,11 +398,6 @@ MediAI intentionally supports a local fallback, so the core assessment flow can 
 
 ## 📸 Screenshots
 
-Add screenshots here to make the repository more visually appealing:
-
-```md
-## 📸 Screenshots
-
 ### Home
 <img width="1687" height="882" alt="Screenshot 2026-08-27 103408" src="https://github.com/user-attachments/assets/e1eee86a-b5a8-4839-bc0d-dcff2a15333a" />
 
@@ -412,7 +407,6 @@ Add screenshots here to make the repository more visually appealing:
 ### Results Dashboard
 <img width="1682" height="777" alt="Screenshot 2026-08-27 103453" src="https://github.com/user-attachments/assets/3abc92cb-4cab-4b9b-907a-e6f4c5b47f55" />
 
-```
 
 ## 🎯 What This Project Demonstrates
 
